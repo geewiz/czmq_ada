@@ -1,0 +1,20 @@
+name = "czmq_ada_examples"
+version = "0.1.0"
+description = "Example programs demonstrating the CZMQ Ada bindings"
+authors = ["Jochen Lillich <jochen@lillich.co>"]
+licenses = "MPL-2.0"
+maintainers = ["Jochen Lillich <jochen@lillich.co>"]
+maintainers-logins = ["geewiz"]
+tags = ["zeromq", "examples"]
+
+project-files = ["examples.gpr"]
+
+executables = ["push_pull", "publisher", "subscriber"]
+
+[[depends-on]]
+czmq_ada = "~0.1"
+
+[available.'case(os)']
+linux = true
+macos = true
+windows = true

@@ -20,6 +20,10 @@ examples/push_pull
 b~*.ad[bs]
 b__*.ad[bs]
 
+# Alire artifacts
+alire/
+config/
+
 # Editor/IDE files
 *~
 *.swp
