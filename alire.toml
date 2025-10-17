@@ -11,11 +11,8 @@ website = "https://github.com/geewiz/czmq_ada"
 project-files = ["czmq_ada.gpr"]
 
 notes = """
-Requires CZMQ library to be installed:
-  Fedora/RHEL: sudo dnf install czmq-devel
-  Debian/Ubuntu: sudo apt install libczmq-dev
-  Arch Linux: sudo pacman -S czmq
-  macOS: brew install czmq
+Requires CZMQ library to be installed.
+See README.md for installation instructions for your platform.
 """
 
 [available.'case(os)']

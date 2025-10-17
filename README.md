@@ -35,9 +35,14 @@ czmq_ada/
 - CZMQ library and development headers
 - ZeroMQ library
 
-In Fedora 42:
+**Fedora/RHEL:**
 ```bash
 sudo dnf install gcc-gnat gprbuild czmq-devel zeromq-devel
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt install gnat gprbuild libczmq-dev
 ```
 
 ### Build Library
