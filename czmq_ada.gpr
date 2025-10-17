@@ -1,0 +1,29 @@
+project CZMQ_Ada is
+
+   for Source_Dirs use ("src");
+   for Object_Dir use "obj";
+   for Library_Dir use "lib";
+   for Library_Name use "czmq_ada";
+   for Library_Kind use "static";
+
+   type Build_Type is ("debug", "release");
+   Build : Build_Type := external ("BUILD", "debug");
+
+   package Compiler is
+      case Build is
+         when "debug" =>
+            for Default_Switches ("Ada") use ("-g", "-gnatwa", "-gnata", "-gnat2012");
+         when "release" =>
+            for Default_Switches ("Ada") use ("-O2", "-gnatn", "-gnatwa", "-gnat2012");
+      end case;
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("Ada") use ("-Es");
+   end Binder;
+
+   package Linker is
+      for Linker_Options use ("-lczmq");
+   end Linker;
+
+end CZMQ_Ada;

@@ -1,0 +1,30 @@
+# Ada/GPRbuild artifacts
+obj/
+*.o
+*.ali
+*.lexch
+*.bexch
+
+# Libraries
+lib/
+*.a
+*.so
+*.so.*
+
+# Executables
+examples/publisher
+examples/subscriber
+examples/push_pull
+
+# GPRbuild artifacts
+b~*.ad[bs]
+b__*.ad[bs]
+
+# Editor/IDE files
+*~
+*.swp
+*.swo
+.#*
+\#*\#
+.DS_Store
+.claude
