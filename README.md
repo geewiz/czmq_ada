@@ -2,7 +2,8 @@
 
 High-level Ada bindings for CZMQ (ZeroMQ high-level C binding).
 
-Note: I'm new to Ada and built this library using an LLM agent so I can learn the language by applying it in my daily DevOps practice. I couldn't find too many libraries for this space that are still maintained. I did apply my engineering experience and common sense, and I'll do my best to refactor and extend this foundation to proper Ada engineering standards. Community input is always welcome because my main goal is learning.
+Note: I'm new to Ada and want to learn it in depth by applying it to practical DevOps tasks. Since I couldn't find too many libraries for this space that are still maintained, I built this library using an LLM agent to basically bootstrap my learning journey. I did apply my general software engineering experience and common sense, and I'll do my best to refactor and extend this foundation to proper Ada engineering standards. **Community input is always welcome** because my main goal is learning.
+
 
 Warning: One practical consequence of this approach is that until this library has reached a mature version 1.0, there will probably be breaking changes even with only minor version bumps.
 
