@@ -1,5 +1,5 @@
 name = "czmq_ada_tests"
-version = "0.1.1"
+version = "0.2.0"
 description = "Tests for CZMQ Ada bindings"
 tags = ["zeromq", "tests"]
 licenses = "MPL-2.0"
@@ -12,4 +12,4 @@ project-files = ["tests.gpr"]
 executables = ["test_certificates", "test_sockets_curve", "test_authentication"]
 
 [[depends-on]]
-czmq_ada = "~0.1"
+czmq_ada = "~0.2"
