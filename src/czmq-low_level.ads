@@ -128,9 +128,15 @@ package CZMQ.Low_Level is
      External_Name => "zsock_disconnect";
 
    procedure zsock_set_subscribe (self : zsock_t_Access; subscribe : CS.chars_ptr) with
-     Import        => True,
-     Convention    => C,
-     External_Name => "zsock_set_subscribe";
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsock_set_subscribe";
+
+   procedure zsock_set_identity (self : System.Address;
+                                 identity : CS.chars_ptr) with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsock_set_identity";
 
    --  zmsg functions
    function zmsg_new return zmsg_t_Access with

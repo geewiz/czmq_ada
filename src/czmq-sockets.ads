@@ -48,6 +48,10 @@ package CZMQ.Sockets is
    procedure Disconnect (Self : in out Socket; Endpoint : String);
    procedure Set_Subscribe (Self : in out Socket; Filter : String);
 
+   --  Set the socket identity for routing (used with DEALER/ROUTER patterns).
+   --  The identity string must be 1-255 characters.
+   procedure Set_Identity (Self : in out Socket; Identity : String);
+
    --  CURVE security options
 
    --  Enable or disable CURVE server mode on this socket.
