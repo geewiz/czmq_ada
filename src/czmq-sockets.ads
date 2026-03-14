@@ -48,6 +48,32 @@ package CZMQ.Sockets is
    procedure Disconnect (Self : in out Socket; Endpoint : String);
    procedure Set_Subscribe (Self : in out Socket; Filter : String);
 
+   --  CURVE security options
+
+   --  Enable or disable CURVE server mode on this socket.
+   --  A CURVE server authenticates connecting clients.
+   procedure Set_Curve_Server (Self : in out Socket; Enabled : Boolean := True);
+
+   --  Set the server's public key on a client socket (Z85-encoded, 40 chars).
+   --  The client uses this to verify the server's identity.
+   procedure Set_Curve_Serverkey (Self : in out Socket; Key : String);
+
+   --  Set the ZAP authentication domain for this socket.
+   --  Used by the ZAP authenticator to apply per-domain policies.
+   procedure Set_Zap_Domain (Self : in out Socket; Domain : String);
+
+   --  PLAIN security options
+
+   --  Enable PLAIN server mode on this socket.
+   --  A PLAIN server authenticates clients using username/password.
+   procedure Set_Plain_Server (Self : in out Socket; Enabled : Boolean := True);
+
+   --  Set the PLAIN username for a client socket
+   procedure Set_Plain_Username (Self : in out Socket; Username : String);
+
+   --  Set the PLAIN password for a client socket
+   procedure Set_Plain_Password (Self : in out Socket; Password : String);
+
    --  Check if socket is valid
    function Is_Valid (Self : Socket) return Boolean;
 

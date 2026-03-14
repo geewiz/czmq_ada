@@ -232,6 +232,196 @@ package CZMQ.Low_Level is
      Convention    => C,
      External_Name => "zpoller_wait";
 
+   --  zcert opaque type
+   type zcert_t is null record;
+   type zcert_t_Access is access all zcert_t with
+     Convention => C;
+
+   --  zcert functions
+   function zcert_new return zcert_t_Access with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_new";
+
+   function zcert_new_from (public_key : System.Address;
+                            secret_key : System.Address)
+     return zcert_t_Access with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_new_from";
+
+   function zcert_load (filename : CS.chars_ptr) return zcert_t_Access with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_load";
+
+   procedure zcert_destroy (self_p : access zcert_t_Access) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_destroy";
+
+   function zcert_public_key (self : zcert_t_Access) return System.Address with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_public_key";
+
+   function zcert_secret_key (self : zcert_t_Access) return System.Address with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_secret_key";
+
+   function zcert_public_txt (self : zcert_t_Access) return CS.chars_ptr with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_public_txt";
+
+   function zcert_secret_txt (self : zcert_t_Access) return CS.chars_ptr with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_secret_txt";
+
+   procedure zcert_set_meta (self   : zcert_t_Access;
+                             name   : CS.chars_ptr;
+                             format : CS.chars_ptr) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_set_meta";
+
+   function zcert_meta (self : zcert_t_Access;
+                        name : CS.chars_ptr) return CS.chars_ptr with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_meta";
+
+   function zcert_save (self     : zcert_t_Access;
+                        filename : CS.chars_ptr) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_save";
+
+   function zcert_save_public (self     : zcert_t_Access;
+                               filename : CS.chars_ptr) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_save_public";
+
+   function zcert_save_secret (self     : zcert_t_Access;
+                               filename : CS.chars_ptr) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_save_secret";
+
+   procedure zcert_apply (self   : zcert_t_Access;
+                          socket : System.Address) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_apply";
+
+   function zcert_dup (self : zcert_t_Access) return zcert_t_Access with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_dup";
+
+   function zcert_eq (self    : zcert_t_Access;
+                      compare : zcert_t_Access) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zcert_eq";
+
+   --  zsock CURVE options
+   procedure zsock_set_curve_server (self : System.Address;
+                                    curve_server : C.int) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_set_curve_server";
+
+   procedure zsock_set_curve_serverkey (self : System.Address;
+                                       curve_serverkey : CS.chars_ptr) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_set_curve_serverkey";
+
+   procedure zsock_set_curve_publickey (self : System.Address;
+                                       curve_publickey : CS.chars_ptr) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_set_curve_publickey";
+
+   procedure zsock_set_curve_secretkey (self : System.Address;
+                                       curve_secretkey : CS.chars_ptr) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_set_curve_secretkey";
+
+   --  zsock PLAIN options
+   procedure zsock_set_plain_server (self : System.Address;
+                                    plain_server : C.int) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_set_plain_server";
+
+   procedure zsock_set_plain_username (self : System.Address;
+                                      plain_username : CS.chars_ptr) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_set_plain_username";
+
+   procedure zsock_set_plain_password (self : System.Address;
+                                      plain_password : CS.chars_ptr) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_set_plain_password";
+
+   --  zsock ZAP domain
+   procedure zsock_set_zap_domain (self : System.Address;
+                                  zap_domain : CS.chars_ptr) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_set_zap_domain";
+
+   --  zactor functions
+   type zactor_fn is access procedure (pipe     : zsock_t_Access;
+                                       arg      : System.Address) with
+     Convention => C;
+
+   function zactor_new (fn   : zactor_fn;
+                        args : System.Address) return zactor_t_Access with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zactor_new";
+
+   procedure zactor_destroy (self_p : access zactor_t_Access) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zactor_destroy";
+
+   --  zauth actor function (imported as a procedure so we can take 'Access)
+   procedure zauth (pipe : zsock_t_Access; certstore : System.Address) with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zauth";
+
+   --  zstr functions (for sending commands to actors)
+   function zstr_send (dest : zactor_t_Access;
+                       str  : CS.chars_ptr) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zstr_send";
+
+   function zstr_sendx (dest : zactor_t_Access;
+                        s1   : CS.chars_ptr;
+                        s2   : CS.chars_ptr;
+                        s3   : CS.chars_ptr) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zstr_sendx";
+
+   --  zsock_wait (works with actors via polymorphic socket)
+   function zsock_wait (self : zactor_t_Access) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zsock_wait";
+
    --  Utility functions
    procedure zsys_init with
      Import        => True,

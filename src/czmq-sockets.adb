@@ -308,13 +308,80 @@ package body CZMQ.Sockets is
       CS.Free (C_Filter);
    end Set_Subscribe;
 
+   procedure Set_Curve_Server (Self : in out Socket; Enabled : Boolean := True) is
+   begin
+      if Self.Handle = null then
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+
+      Low_Level.zsock_set_curve_server
+        (Self.Handle.all'Address, (if Enabled then 1 else 0));
+   end Set_Curve_Server;
+
+   procedure Set_Curve_Serverkey (Self : in out Socket; Key : String) is
+      C_Key : CS.chars_ptr := CS.New_String (Key);
+   begin
+      if Self.Handle = null then
+         CS.Free (C_Key);
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+
+      Low_Level.zsock_set_curve_serverkey (Self.Handle.all'Address, C_Key);
+      CS.Free (C_Key);
+   end Set_Curve_Serverkey;
+
+   procedure Set_Zap_Domain (Self : in out Socket; Domain : String) is
+      C_Domain : CS.chars_ptr := CS.New_String (Domain);
+   begin
+      if Self.Handle = null then
+         CS.Free (C_Domain);
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+
+      Low_Level.zsock_set_zap_domain (Self.Handle.all'Address, C_Domain);
+      CS.Free (C_Domain);
+   end Set_Zap_Domain;
+
+   procedure Set_Plain_Server (Self : in out Socket; Enabled : Boolean := True) is
+   begin
+      if Self.Handle = null then
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+
+      Low_Level.zsock_set_plain_server
+        (Self.Handle.all'Address, (if Enabled then 1 else 0));
+   end Set_Plain_Server;
+
+   procedure Set_Plain_Username (Self : in out Socket; Username : String) is
+      C_Username : CS.chars_ptr := CS.New_String (Username);
+   begin
+      if Self.Handle = null then
+         CS.Free (C_Username);
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+
+      Low_Level.zsock_set_plain_username (Self.Handle.all'Address, C_Username);
+      CS.Free (C_Username);
+   end Set_Plain_Username;
+
+   procedure Set_Plain_Password (Self : in out Socket; Password : String) is
+      C_Password : CS.chars_ptr := CS.New_String (Password);
+   begin
+      if Self.Handle = null then
+         CS.Free (C_Password);
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+
+      Low_Level.zsock_set_plain_password (Self.Handle.all'Address, C_Password);
+      CS.Free (C_Password);
+   end Set_Plain_Password;
+
    function Is_Valid (Self : Socket) return Boolean is
    begin
       return Self.Handle /= null;
    end Is_Valid;
 
    function Get_Handle (Self : Socket) return System.Address is
-      use type System.Address;
    begin
       if Self.Handle = null then
          return System.Null_Address;

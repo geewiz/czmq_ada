@@ -93,8 +93,6 @@ package body CZMQ.Messages is
    end Size;
 
    procedure Send (Self : in out Message; Dest : in out Sockets.Socket) is
-      use type Low_Level.zsock_t_Access;
-
       Addr : constant System.Address := Dest.Get_Handle;
       Dest_Handle : constant Low_Level.zsock_t_Access :=
         Low_Level.zsock_t_Access (To_Zsock_Access (Addr));
@@ -121,8 +119,6 @@ package body CZMQ.Messages is
    end Send;
 
    function Receive (Source : in out Sockets.Socket) return Message is
-      use type Low_Level.zsock_t_Access;
-
       Addr : constant System.Address := Source.Get_Handle;
       Source_Handle : constant Low_Level.zsock_t_Access :=
         Low_Level.zsock_t_Access (To_Zsock_Access (Addr));

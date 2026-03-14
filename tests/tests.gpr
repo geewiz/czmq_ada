@@ -1,0 +1,19 @@
+with "../czmq_ada.gpr";
+
+project Tests is
+   for Source_Dirs use (".");
+   for Object_Dir use "obj";
+   for Exec_Dir use ".";
+   for Main use ("test_certificates.adb",
+                  "test_sockets_curve.adb",
+                  "test_authentication.adb");
+
+   package Compiler is
+      --  Inherit library switches but disable "could be declared constant"
+      --  warning (-gnatwK). Limited_Controlled test variables trigger false
+      --  positives because GNAT does not account for implicit Finalize calls.
+      for Default_Switches ("Ada") use
+        CZMQ_Ada.Compiler'Default_Switches ("Ada") & ("-gnatwK");
+   end Compiler;
+   package Binder renames CZMQ_Ada.Binder;
+end Tests;
