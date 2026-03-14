@@ -11,7 +11,7 @@ with CZMQ.Sockets;
 procedure Test_Certificates is
 
    use Ada.Text_IO;
-   use type CZMQ.Certificates.Certificate;
+   use CZMQ.Certificates;
 
    Pass_Count : Natural := 0;
    Fail_Count : Natural := 0;
@@ -65,7 +65,7 @@ begin
    begin
       Assert (Cert_A.Public_Key /= Cert_B.Public_Key,
               "Two certificates have different public keys");
-      Assert (not (Cert_A = Cert_B),
+      Assert (not Equal (Cert_A, Cert_B),
               "Two certificates are not equal");
    end;
 
@@ -127,7 +127,7 @@ begin
                     "Loaded secret key matches original");
             Assert (Loaded.Meta ("name") = "saved-cert",
                     "Loaded metadata matches original");
-            Assert (Original = Loaded,
+            Assert (Equal (Original, Loaded),
                     "Original and loaded certificates are equal");
          end;
       end;

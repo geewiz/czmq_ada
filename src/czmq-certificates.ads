@@ -56,8 +56,8 @@ package CZMQ.Certificates is
    --  Check if certificate is valid
    function Is_Valid (Self : Certificate) return Boolean;
 
-   --  Compare two certificates by their keys
-   overriding function "=" (Left, Right : Certificate) return Boolean;
+   --  Compare two certificates by their public and secret keys
+   function Equal (Left, Right : Certificate) return Boolean;
 
 private
 

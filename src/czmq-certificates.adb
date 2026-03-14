@@ -185,14 +185,14 @@ package body CZMQ.Certificates is
       return Self.Handle /= null;
    end Is_Valid;
 
-   overriding function "=" (Left, Right : Certificate) return Boolean is
+   function Equal (Left, Right : Certificate) return Boolean is
    begin
       if Left.Handle = null or Right.Handle = null then
          return Left.Handle = null and Right.Handle = null;
       end if;
 
       return Low_Level.zcert_eq (Left.Handle, Right.Handle) /= 0;
-   end "=";
+   end Equal;
 
    overriding procedure Finalize (Self : in out Certificate) is
       Handle_Copy : aliased Low_Level.zcert_t_Access := Self.Handle;
