@@ -1,0 +1,15 @@
+name = "czmq_ada_tests"
+version = "0.1.1"
+description = "Tests for CZMQ Ada bindings"
+tags = ["zeromq", "tests"]
+licenses = "MPL-2.0"
+authors = ["Jochen Lillich <contact@geewiz.dev>"]
+maintainers = ["Jochen Lillich <contact@geewiz.dev>"]
+maintainers-logins = ["geewiz"]
+
+project-files = ["tests.gpr"]
+
+executables = ["test_certificates", "test_sockets_curve", "test_authentication"]
+
+[[depends-on]]
+czmq_ada = "~0.1"
