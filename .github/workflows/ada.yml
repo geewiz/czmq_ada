@@ -15,10 +15,21 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Set up GNAT toolchain
-      run: >
-        sudo apt-get update &&
-        sudo apt-get install gnat gprbuild
+    - name: Install CZMQ development library
+      run: sudo apt-get update && sudo apt-get install -y libczmq-dev
 
-    - name: Build
-      run: gprbuild -j0 -p
+    - name: Set up Alire
+      uses: alire-project/setup-alire@v4
+
+    - name: Build library
+      run: alr build
+
+    - name: Build tests
+      run: alr exec -- gprbuild -j0 -p -P tests/tests.gpr
+
+    - name: Run tests
+      run: |
+        tests/bin/test_sockets
+        tests/bin/test_sockets_curve
+        tests/bin/test_certificates
+        tests/bin/test_authentication
