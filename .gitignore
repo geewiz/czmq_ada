@@ -15,9 +15,7 @@ lib/
 examples/publisher
 examples/subscriber
 examples/push_pull
-tests/test_certificates
-tests/test_sockets_curve
-tests/test_authentication
+tests/bin/
 
 # GPRbuild artifacts
 b~*.ad[bs]

@@ -308,6 +308,18 @@ package body CZMQ.Sockets is
       CS.Free (C_Filter);
    end Set_Subscribe;
 
+   procedure Set_Identity (Self : in out Socket; Identity : String) is
+      C_Identity : CS.chars_ptr := CS.New_String (Identity);
+   begin
+      if Self.Handle = null then
+         CS.Free (C_Identity);
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+
+      Low_Level.zsock_set_identity (Self.Handle.all'Address, C_Identity);
+      CS.Free (C_Identity);
+   end Set_Identity;
+
    procedure Set_Curve_Server (Self : in out Socket; Enabled : Boolean := True) is
    begin
       if Self.Handle = null then
