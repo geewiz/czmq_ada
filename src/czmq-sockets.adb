@@ -382,7 +382,6 @@ package body CZMQ.Sockets is
    end Is_Valid;
 
    function Get_Handle (Self : Socket) return System.Address is
-      use type System.Address;
    begin
       if Self.Handle = null then
          return System.Null_Address;
