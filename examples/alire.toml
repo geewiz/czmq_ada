@@ -1,5 +1,5 @@
 name = "czmq_ada_examples"
-version = "0.2.0"
+version = "0.3.0"
 description = "Example programs demonstrating the CZMQ Ada bindings"
 tags = ["zeromq", "examples"]
 licenses = "MPL-2.0"
@@ -12,4 +12,4 @@ project-files = ["examples.gpr"]
 executables = ["push_pull", "publisher", "subscriber"]
 
 [[depends-on]]
-czmq_ada = "~0.2"
+czmq_ada = "~0.3"
