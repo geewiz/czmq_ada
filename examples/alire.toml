@@ -13,3 +13,6 @@ executables = ["push_pull", "publisher", "subscriber"]
 
 [[depends-on]]
 czmq_ada = "~0.3"
+
+[[pins]]
+czmq_ada = { path = ".." }

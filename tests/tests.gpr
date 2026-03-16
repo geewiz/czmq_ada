@@ -1,4 +1,4 @@
-with "../czmq_ada.gpr";
+with "czmq_ada.gpr";
 
 project Tests is
    for Source_Dirs use (".");

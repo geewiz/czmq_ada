@@ -2,10 +2,11 @@
 
 High-level Ada bindings for CZMQ (ZeroMQ high-level C binding).
 
-Note: I'm new to Ada and want to learn it in depth by applying it to practical DevOps tasks. Since I couldn't find too many libraries for this space that are still maintained, I built this library using an LLM agent to basically bootstrap my learning journey. I did apply my general software engineering experience and common sense, and I'll do my best to refactor and extend this foundation to proper Ada engineering standards. **Community input is always welcome** because my main goal is learning.
+[!NOTE]
+I'm new to Ada and want to learn it in depth by applying it to practical DevOps tasks. Since I couldn't find too many libraries for this space that are still maintained, I built this library. Community input (e.g. issues, pull requests) that helps my learning is always appreciated.
 
-
-Warning: One practical consequence of this approach is that until this library has reached a mature version 1.0, there will probably be breaking changes even with only minor version bumps.
+[!WARNING]
+Until this library has reached a mature version 1.0, expect there to be breaking changes even with only minor version bumps.
 
 ## Features
 
@@ -35,31 +36,41 @@ czmq_ada/
 
 ### Prerequisites
 
-- GNAT Ada compiler (tested with GNAT 15.2.1)
-- GPRbuild
+- [Alire](https://alire.ada.dev/) package manager (provides the GNAT toolchain)
 - CZMQ library and development headers
-- ZeroMQ library
 
 **Fedora/RHEL:**
 ```bash
-sudo dnf install gcc-gnat gprbuild czmq-devel zeromq-devel
+sudo dnf install czmq-devel zeromq-devel
 ```
 
 **Ubuntu/Debian:**
 ```bash
-sudo apt install gnat gprbuild libczmq-dev
+sudo apt install libczmq-dev
 ```
 
 ### Build Library
 
 ```bash
-gprbuild -P czmq_ada.gpr
+alr build
+```
+
+### Build and Run Tests
+
+```bash
+cd tests
+alr build
+bin/test_sockets
+bin/test_certificates
+bin/test_sockets_curve
+bin/test_authentication
 ```
 
 ### Build Examples
 
 ```bash
-gprbuild -P examples/examples.gpr
+cd examples
+alr build
 ```
 
 ## API Overview
@@ -112,27 +123,27 @@ Count : Natural := Size (Msg);
 
 ### PUSH-PULL Pattern (Single Process)
 ```bash
-./examples/push_pull
+examples/bin/push_pull
 ```
 
 ### PUB-SUB Pattern (Two Terminals)
 
 **Terminal 1 - Publisher:**
 ```bash
-./examples/publisher
+examples/bin/publisher
 ```
 
 **Terminal 2 - Subscriber:**
 ```bash
-./examples/subscriber
+examples/bin/subscriber
 ```
 
-**Note**: The publisher waits 2 seconds before sending messages. This is necessary to avoid the "slow joiner syndrome" - a timing issue where initial messages may be lost during subscription establishment. See [Chapter 5 of the ZeroMQ Guide](https://zguide.zeromq.org/docs/chapter5/#toc3) for details.
+[!NOTE]
+The publisher waits 2 seconds before sending messages. This is necessary to avoid the "slow joiner syndrome" - a timing issue where initial messages may be lost during subscription establishment. See [Chapter 5 of the ZeroMQ Guide](https://zguide.zeromq.org/docs/chapter5/#toc3) for details.
 
 ## Current Limitations
 
-- Only core CZMQ features implemented (sockets and messages)
-- Actors, certificates, authentication not yet implemented
+- High-level wrappers for actors, pollers, and frames are not yet implemented
 - PUB-SUB requires careful timing or synchronization
 
 ## Implementation Notes
@@ -171,19 +182,9 @@ end;
 
 Messages are consumed by `Send` - the handle is set to `null` after sending to prevent double-free.
 
-## Extending the Bindings
-
-To add more CZMQ features:
-
-1. Add C imports to `czmq-low_level.ads`
-2. Create high-level Ada package (e.g., `czmq-actors.ads/.adb`)
-3. Follow the pattern of controlled types for resource management
-
 ## License
 
-This project is licensed under the Mozilla Public License 2.0 (MPL-2.0). See the [LICENSE](LICENSE) file for details.
-
-Note: CZMQ itself is also licensed under MPL 2.0.
+This project, like the underlying CZMQ library, is licensed under the Mozilla Public License 2.0 (MPL-2.0). See the [LICENSE](LICENSE) file for details.
 
 ## References
 

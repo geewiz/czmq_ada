@@ -25,11 +25,17 @@ jobs:
       run: alr build
 
     - name: Build tests
-      run: alr exec -- gprbuild -j0 -p -P tests/tests.gpr
+      run: alr build
+      working-directory: tests
 
     - name: Run tests
+      working-directory: tests
       run: |
-        tests/bin/test_sockets
-        tests/bin/test_sockets_curve
-        tests/bin/test_certificates
-        tests/bin/test_authentication
+        bin/test_sockets
+        bin/test_sockets_curve
+        bin/test_certificates
+        bin/test_authentication
+
+    - name: Build examples
+      run: alr build
+      working-directory: examples
