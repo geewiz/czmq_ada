@@ -2,11 +2,11 @@
 
 High-level Ada bindings for CZMQ (ZeroMQ high-level C binding).
 
-[!NOTE]
-I'm new to Ada and want to learn it in depth by applying it to practical DevOps tasks. Since I couldn't find too many libraries for this space that are still maintained, I built this library. Community input (e.g. issues, pull requests) that helps my learning is always appreciated.
+> [!NOTE]
+> I'm new to Ada and want to learn it in depth by applying it to practical DevOps tasks. Since I couldn't find too many libraries for this space that are still maintained, I built this library. Community input (e.g. issues, pull requests) that helps my learning is always appreciated.
 
-[!WARNING]
-Until this library has reached a mature version 1.0, expect there to be breaking changes even with only minor version bumps.
+> [!WARNING]
+> Until this library has reached a mature version 1.0, expect there to be breaking changes even with only minor version bumps.
 
 ## Features
 
@@ -138,8 +138,8 @@ examples/bin/publisher
 examples/bin/subscriber
 ```
 
-[!NOTE]
-The publisher waits 2 seconds before sending messages. This is necessary to avoid the "slow joiner syndrome" - a timing issue where initial messages may be lost during subscription establishment. See [Chapter 5 of the ZeroMQ Guide](https://zguide.zeromq.org/docs/chapter5/#toc3) for details.
+> [!NOTE]
+> The publisher waits 2 seconds before sending messages. This is necessary to avoid the "slow joiner syndrome" - a timing issue where initial messages may be lost during subscription establishment. See [Chapter 5 of the ZeroMQ Guide](https://zguide.zeromq.org/docs/chapter5/#toc3) for details.
 
 ## Current Limitations
 
