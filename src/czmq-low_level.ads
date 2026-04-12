@@ -246,6 +246,16 @@ package CZMQ.Low_Level is
      Convention    => C,
      External_Name => "zpoller_wait";
 
+   function zpoller_expired (self : zpoller_t_Access) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zpoller_expired";
+
+   function zpoller_terminated (self : zpoller_t_Access) return C.int with
+     Import        => True,
+     Convention    => C,
+     External_Name => "zpoller_terminated";
+
    --  zcert opaque type
    type zcert_t is null record;
    type zcert_t_Access is access all zcert_t with

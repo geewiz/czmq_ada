@@ -7,6 +7,7 @@ project Tests is
    for Main use ("test_certificates.adb",
                   "test_messages.adb",
                   "test_poller.adb",
+                  "test_pollers.adb",
                   "test_sockets.adb",
                   "test_sockets_curve.adb",
                   "test_authentication.adb");

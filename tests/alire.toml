@@ -12,6 +12,7 @@ project-files = ["tests.gpr"]
 executables = ["test_certificates",
                "test_messages",
                "test_poller",
+               "test_pollers",
                "test_sockets",
                "test_sockets_curve",
                "test_authentication"]
