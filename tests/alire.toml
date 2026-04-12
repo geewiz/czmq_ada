@@ -1,5 +1,5 @@
 name = "czmq_ada_tests"
-version = "0.3.0"
+version = "0.4.0"
 description = "Tests for CZMQ Ada bindings"
 tags = ["zeromq", "tests"]
 licenses = "MPL-2.0"
@@ -18,7 +18,7 @@ executables = ["test_certificates",
                "test_authentication"]
 
 [[depends-on]]
-czmq_ada = "~0.3"
+czmq_ada = "~0.4"
 
 [[pins]]
 czmq_ada = { path = ".." }
