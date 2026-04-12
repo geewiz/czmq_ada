@@ -89,7 +89,58 @@ begin
 
    Put_Line ("");
 
-   --  Test 6: Invalid socket raises CZMQ_Error
+   --  Test 6: Set and get receive timeout
+   Put_Line ("-- Receive timeout --");
+   declare
+      Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
+   begin
+      Sock.Set_Receive_Timeout (500);
+      Assert (Sock.Receive_Timeout = 500,
+              "Receive_Timeout returns value set by Set_Receive_Timeout");
+   end;
+
+   Put_Line ("");
+
+   --  Test 7: Set and get send timeout
+   Put_Line ("-- Send timeout --");
+   declare
+      Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Push;
+   begin
+      Sock.Set_Send_Timeout (250);
+      Assert (Sock.Send_Timeout = 250,
+              "Send_Timeout returns value set by Set_Send_Timeout");
+   end;
+
+   Put_Line ("");
+
+   --  Test 8: Default timeout is -1 (infinite)
+   Put_Line ("-- Default timeout --");
+   declare
+      Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
+   begin
+      Assert (Sock.Receive_Timeout = -1,
+              "Default Receive_Timeout is -1 (infinite)");
+      Assert (Sock.Send_Timeout = -1,
+              "Default Send_Timeout is -1 (infinite)");
+   end;
+
+   Put_Line ("");
+
+   --  Test 9: Timeout on invalid socket raises CZMQ_Error
+   Put_Line ("-- Timeout on invalid socket --");
+   declare
+      Sock : CZMQ.Sockets.Socket;
+   begin
+      Sock.Set_Receive_Timeout (100);
+      Assert (False, "Set_Receive_Timeout on invalid socket should raise");
+   exception
+      when CZMQ.CZMQ_Error =>
+         Assert (True, "Set_Receive_Timeout on invalid socket raises CZMQ_Error");
+   end;
+
+   Put_Line ("");
+
+   --  Test 10: Invalid socket raises CZMQ_Error
    Put_Line ("-- Error handling --");
    declare
       Sock : CZMQ.Sockets.Socket;  --  default, invalid

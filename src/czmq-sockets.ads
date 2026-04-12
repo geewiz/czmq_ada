@@ -78,6 +78,20 @@ package CZMQ.Sockets is
    --  Set the PLAIN password for a client socket
    procedure Set_Plain_Password (Self : in out Socket; Password : String);
 
+   --  Timeout options
+
+   --  Set the receive timeout in milliseconds. -1 means wait forever (default).
+   procedure Set_Receive_Timeout (Self : in out Socket; Timeout_Ms : Integer);
+
+   --  Get the current receive timeout in milliseconds.
+   function Receive_Timeout (Self : Socket) return Integer;
+
+   --  Set the send timeout in milliseconds. -1 means wait forever (default).
+   procedure Set_Send_Timeout (Self : in out Socket; Timeout_Ms : Integer);
+
+   --  Get the current send timeout in milliseconds.
+   function Send_Timeout (Self : Socket) return Integer;
+
    --  Check if socket is valid
    function Is_Valid (Self : Socket) return Boolean;
 

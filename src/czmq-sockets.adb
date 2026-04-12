@@ -393,6 +393,38 @@ package body CZMQ.Sockets is
       CS.Free (C_Password);
    end Set_Plain_Password;
 
+   procedure Set_Receive_Timeout (Self : in out Socket; Timeout_Ms : Integer) is
+   begin
+      if Self.Handle = null then
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+      Low_Level.zsock_set_rcvtimeo (To_Address (Self.Handle), C.int (Timeout_Ms));
+   end Set_Receive_Timeout;
+
+   function Receive_Timeout (Self : Socket) return Integer is
+   begin
+      if Self.Handle = null then
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+      return Integer (Low_Level.zsock_rcvtimeo (To_Address (Self.Handle)));
+   end Receive_Timeout;
+
+   procedure Set_Send_Timeout (Self : in out Socket; Timeout_Ms : Integer) is
+   begin
+      if Self.Handle = null then
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+      Low_Level.zsock_set_sndtimeo (To_Address (Self.Handle), C.int (Timeout_Ms));
+   end Set_Send_Timeout;
+
+   function Send_Timeout (Self : Socket) return Integer is
+   begin
+      if Self.Handle = null then
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+      return Integer (Low_Level.zsock_sndtimeo (To_Address (Self.Handle)));
+   end Send_Timeout;
+
    function Is_Valid (Self : Socket) return Boolean is
    begin
       return Self.Handle /= null;

@@ -4,7 +4,6 @@
 --  Regression test for https://github.com/geewiz/czmq_ada/issues/3
 
 with Ada.Text_IO;
-with CZMQ.Low_Level;
 with CZMQ.Sockets;
 with CZMQ.Messages;
 
@@ -48,7 +47,7 @@ begin
       Msg_Out.Send (Pusher);
 
       --  Set a short timeout so the test doesn't hang if something goes wrong
-      CZMQ.Low_Level.zsock_set_rcvtimeo (Puller.Get_Handle, 1000);
+      Puller.Set_Receive_Timeout (1000);
 
       CZMQ.Messages.Receive (Puller, Msg_In, Status);
       Assert (Status = CZMQ.Messages.Success,
@@ -72,7 +71,7 @@ begin
       Puller.Bind ("inproc://test-recv-timeout");
 
       --  Set a very short receive timeout
-      CZMQ.Low_Level.zsock_set_rcvtimeo (Puller.Get_Handle, 50);
+      Puller.Set_Receive_Timeout (50);
 
       CZMQ.Messages.Receive (Puller, Msg_In, Status);
       Assert (Status = CZMQ.Messages.Timeout,
