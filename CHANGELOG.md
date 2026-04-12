@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `Is_From` for multi-socket readiness polling
   ([#5](https://github.com/geewiz/czmq_ada/issues/5)).
 - `zpoller_expired` and `zpoller_terminated` bindings in `CZMQ.Low_Level`.
+- `Set_Receive_Timeout`, `Receive_Timeout`, `Set_Send_Timeout`, and
+  `Send_Timeout` on `CZMQ.Sockets` for socket-level timeout configuration
+  ([#6](https://github.com/geewiz/czmq_ada/issues/6)).
 - `zsock_set_rcvtimeo` and `errno_location` bindings in `CZMQ.Low_Level`.
 - `Receive_Status` type (`Success`, `Timeout`) in `CZMQ.Messages`.
 - Test suite for message receive with timeout (`test_messages`).

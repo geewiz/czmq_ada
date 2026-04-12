@@ -144,6 +144,22 @@ package CZMQ.Low_Level is
       Convention    => C,
       External_Name => "zsock_set_rcvtimeo";
 
+   function zsock_rcvtimeo (self : System.Address) return C.int with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsock_rcvtimeo";
+
+   procedure zsock_set_sndtimeo (self : System.Address;
+                                 sndtimeo : C.int) with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsock_set_sndtimeo";
+
+   function zsock_sndtimeo (self : System.Address) return C.int with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsock_sndtimeo";
+
    --  zmsg functions
    function zmsg_new return zmsg_t_Access with
      Import        => True,
