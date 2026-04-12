@@ -1,5 +1,5 @@
 name = "czmq_ada"
-version = "0.3.0"
+version = "0.4.0"
 description = "Ada bindings for CZMQ (high-level C API for ZeroMQ)"
 tags = ["zeromq", "messaging", "networking", "bindings"]
 website = "https://github.com/geewiz/czmq_ada"
