@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+- `zpoller_new` binding now includes a mandatory NULL terminator parameter to
+  match the variadic C signature, preventing stack corruption and crashes
+  ([#2](https://github.com/geewiz/czmq_ada/issues/2)).
+
 ## v0.3.0 - 2026-03-14
 
 [Changes since v0.2.0](https://github.com/geewiz/czmq_ada/compare/v0.2.0...v0.3.0)

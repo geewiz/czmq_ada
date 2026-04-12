@@ -10,6 +10,7 @@ maintainers-logins = ["geewiz"]
 project-files = ["tests.gpr"]
 
 executables = ["test_certificates",
+               "test_poller",
                "test_sockets",
                "test_sockets_curve",
                "test_authentication"]
