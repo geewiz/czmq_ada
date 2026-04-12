@@ -35,8 +35,17 @@ package CZMQ.Messages is
    --  Send the message (consumes the message - it will be invalid after)
    procedure Send (Self : in out Message; Dest : in out Sockets.Socket);
 
-   --  Receive a message from a socket
-   function Receive (Source : in out Sockets.Socket) return Message;
+   --  Receive outcome
+   type Receive_Status is (Success, Timeout);
+
+   --  Receive a message from a socket.
+   --  On success, Msg is valid and Status is Success.
+   --  On timeout (when rcvtimeo is set), Msg is invalid and Status is Timeout.
+   --  Raises CZMQ_Error on actual errors (invalid socket, interrupted).
+   procedure Receive
+     (Source : in out Sockets.Socket;
+      Msg    :    out Message;
+      Status :    out Receive_Status);
 
    --  Check if message is valid
    function Is_Valid (Self : Message) return Boolean;

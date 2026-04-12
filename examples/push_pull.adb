@@ -39,12 +39,16 @@ begin
 
    --  Receive the message
    declare
-      Msg : Message := Receive (Puller);
+      Msg    : Message;
+      Status : Receive_Status;
    begin
-      Put_Line ("Received message with" & Size (Msg)'Image & " frames:");
-      Put_Line ("  Frame 1: " & Pop_String (Msg));
-      Put_Line ("  Frame 2: " & Pop_String (Msg));
-      Put_Line ("  Frame 3: " & Pop_String (Msg));
+      Receive (Puller, Msg, Status);
+      if Status = Success then
+         Put_Line ("Received message with" & Size (Msg)'Image & " frames:");
+         Put_Line ("  Frame 1: " & Pop_String (Msg));
+         Put_Line ("  Frame 2: " & Pop_String (Msg));
+         Put_Line ("  Frame 3: " & Pop_String (Msg));
+      end if;
    end;
 
    Put_Line ("Done!");

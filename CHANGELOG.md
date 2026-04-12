@@ -7,12 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- `zsock_set_rcvtimeo` and `errno_location` bindings in `CZMQ.Low_Level`.
+- `Receive_Status` type (`Success`, `Timeout`) in `CZMQ.Messages`.
+- Test suite for message receive with timeout (`test_messages`).
+
+### Changed
+
+- **Breaking:** `CZMQ.Messages.Receive` changed from a function to a procedure
+  with `Msg` and `Status` out parameters. On timeout (`EAGAIN`), returns
+  `Timeout` status with an invalid message instead of raising `CZMQ_Error`
+  ([#3](https://github.com/geewiz/czmq_ada/issues/3)).
+
 ### Fixed
 
 - `zpoller_new` binding now includes a mandatory NULL terminator parameter to
   match the variadic C signature, preventing stack corruption and crashes
   ([#2](https://github.com/geewiz/czmq_ada/issues/2)).
-
 ## v0.3.0 - 2026-03-14
 
 [Changes since v0.2.0](https://github.com/geewiz/czmq_ada/compare/v0.2.0...v0.3.0)

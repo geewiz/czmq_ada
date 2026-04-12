@@ -146,11 +146,19 @@ begin
       end;
 
       declare
-         Msg_In : CZMQ.Messages.Message := CZMQ.Messages.Receive (Server);
-         Payload : constant String := Msg_In.Pop_String;
+         Msg_In  : CZMQ.Messages.Message;
+         Status  : CZMQ.Messages.Receive_Status;
+         use type CZMQ.Messages.Receive_Status;
       begin
-         Assert (Payload = "hello encrypted",
-                 "CURVE encrypted message round-trips correctly");
+         CZMQ.Messages.Receive (Server, Msg_In, Status);
+         Assert (Status = CZMQ.Messages.Success,
+                 "CURVE encrypted receive succeeds");
+         declare
+            Payload : constant String := Msg_In.Pop_String;
+         begin
+            Assert (Payload = "hello encrypted",
+                    "CURVE encrypted message round-trips correctly");
+         end;
       end;
    end;
 
