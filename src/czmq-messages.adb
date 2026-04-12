@@ -18,9 +18,8 @@ package body CZMQ.Messages is
    use type C.int;
    use type CS.chars_ptr;
 
-   type zsock_t_Access_Conv is access all Low_Level.zsock_t;
    function To_Zsock_Access is new Ada.Unchecked_Conversion
-     (System.Address, zsock_t_Access_Conv);
+     (System.Address, Low_Level.zsock_t_Access);
 
    function New_Message return Message is
    begin
@@ -95,7 +94,7 @@ package body CZMQ.Messages is
    procedure Send (Self : in out Message; Dest : in out Sockets.Socket) is
       Addr : constant System.Address := Dest.Get_Handle;
       Dest_Handle : constant Low_Level.zsock_t_Access :=
-        Low_Level.zsock_t_Access (To_Zsock_Access (Addr));
+        To_Zsock_Access (Addr);
       Handle_Copy : aliased Low_Level.zmsg_t_Access := Self.Handle;
       Rc : C.int;
    begin
@@ -131,7 +130,7 @@ package body CZMQ.Messages is
       end if;
 
       Addr := Source.Get_Handle;
-      Source_Handle := Low_Level.zsock_t_Access (To_Zsock_Access (Addr));
+      Source_Handle := To_Zsock_Access (Addr);
       Msg.Handle := Low_Level.zmsg_recv (Source_Handle);
 
       if Msg.Handle /= null then

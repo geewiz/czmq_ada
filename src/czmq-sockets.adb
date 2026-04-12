@@ -6,6 +6,7 @@
 --  License, v. 2.0. If a copy of the MPL was not distributed with this
 --  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+with Ada.Unchecked_Conversion;
 with Interfaces.C;
 with Interfaces.C.Strings;
 
@@ -16,6 +17,10 @@ package body CZMQ.Sockets is
 
    use type C.int;
    use type CS.chars_ptr;
+
+   function To_Address is new Ada.Unchecked_Conversion
+     (Source => Low_Level.zsock_t_Access,
+      Target => System.Address);
 
    function Socket_Type_To_Int (Kind : Socket_Type) return C.int is
    begin
@@ -316,7 +321,7 @@ package body CZMQ.Sockets is
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_identity (Self.Handle.all'Address, C_Identity);
+      Low_Level.zsock_set_identity (To_Address (Self.Handle), C_Identity);
       CS.Free (C_Identity);
    end Set_Identity;
 
@@ -327,7 +332,7 @@ package body CZMQ.Sockets is
       end if;
 
       Low_Level.zsock_set_curve_server
-        (Self.Handle.all'Address, (if Enabled then 1 else 0));
+        (To_Address (Self.Handle), (if Enabled then 1 else 0));
    end Set_Curve_Server;
 
    procedure Set_Curve_Serverkey (Self : in out Socket; Key : String) is
@@ -338,7 +343,7 @@ package body CZMQ.Sockets is
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_curve_serverkey (Self.Handle.all'Address, C_Key);
+      Low_Level.zsock_set_curve_serverkey (To_Address (Self.Handle), C_Key);
       CS.Free (C_Key);
    end Set_Curve_Serverkey;
 
@@ -350,7 +355,7 @@ package body CZMQ.Sockets is
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_zap_domain (Self.Handle.all'Address, C_Domain);
+      Low_Level.zsock_set_zap_domain (To_Address (Self.Handle), C_Domain);
       CS.Free (C_Domain);
    end Set_Zap_Domain;
 
@@ -361,7 +366,7 @@ package body CZMQ.Sockets is
       end if;
 
       Low_Level.zsock_set_plain_server
-        (Self.Handle.all'Address, (if Enabled then 1 else 0));
+        (To_Address (Self.Handle), (if Enabled then 1 else 0));
    end Set_Plain_Server;
 
    procedure Set_Plain_Username (Self : in out Socket; Username : String) is
@@ -372,7 +377,7 @@ package body CZMQ.Sockets is
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_plain_username (Self.Handle.all'Address, C_Username);
+      Low_Level.zsock_set_plain_username (To_Address (Self.Handle), C_Username);
       CS.Free (C_Username);
    end Set_Plain_Username;
 
@@ -384,7 +389,7 @@ package body CZMQ.Sockets is
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_plain_password (Self.Handle.all'Address, C_Password);
+      Low_Level.zsock_set_plain_password (To_Address (Self.Handle), C_Password);
       CS.Free (C_Password);
    end Set_Plain_Password;
 
@@ -398,7 +403,7 @@ package body CZMQ.Sockets is
       if Self.Handle = null then
          return System.Null_Address;
       end if;
-      return Self.Handle.all'Address;
+      return To_Address (Self.Handle);
    end Get_Handle;
 
    overriding procedure Finalize (Self : in out Socket) is

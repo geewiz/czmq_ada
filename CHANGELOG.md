@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `zpoller_new` binding now includes a mandatory NULL terminator parameter to
   match the variadic C signature, preventing stack corruption and crashes
   ([#2](https://github.com/geewiz/czmq_ada/issues/2)).
+- `Get_Handle` and socket option setters in `CZMQ.Sockets` now use
+  `Unchecked_Conversion` instead of `'Address` on a null record, avoiding
+  implementation-defined behavior
+  ([#4](https://github.com/geewiz/czmq_ada/issues/4)).
+
 ## v0.3.0 - 2026-03-14
 
 [Changes since v0.2.0](https://github.com/geewiz/czmq_ada/compare/v0.2.0...v0.3.0)

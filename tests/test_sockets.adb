@@ -3,6 +3,7 @@
 --  Tests setting socket identity and other general options.
 
 with Ada.Text_IO;
+with System;
 with CZMQ.Sockets;
 
 procedure Test_Sockets is
@@ -60,7 +61,35 @@ begin
 
    Put_Line ("");
 
-   --  Test 4: Invalid socket raises CZMQ_Error
+   --  Test 4: Get_Handle returns non-null address for valid socket
+   Put_Line ("-- Get_Handle on valid socket --");
+   declare
+      Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Dealer;
+      Addr : System.Address;
+      use type System.Address;
+   begin
+      Addr := Sock.Get_Handle;
+      Assert (Addr /= System.Null_Address,
+              "Get_Handle returns non-null address for valid socket");
+   end;
+
+   Put_Line ("");
+
+   --  Test 5: Get_Handle returns Null_Address for invalid socket
+   Put_Line ("-- Get_Handle on invalid socket --");
+   declare
+      Sock : CZMQ.Sockets.Socket;
+      Addr : System.Address;
+      use type System.Address;
+   begin
+      Addr := Sock.Get_Handle;
+      Assert (Addr = System.Null_Address,
+              "Get_Handle returns Null_Address for invalid socket");
+   end;
+
+   Put_Line ("");
+
+   --  Test 6: Invalid socket raises CZMQ_Error
    Put_Line ("-- Error handling --");
    declare
       Sock : CZMQ.Sockets.Socket;  --  default, invalid
