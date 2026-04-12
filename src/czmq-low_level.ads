@@ -216,7 +216,9 @@ package CZMQ.Low_Level is
      External_Name => "zframe_strdup";
 
    --  zpoller functions
-   function zpoller_new (reader : System.Address) return zpoller_t_Access with
+   function zpoller_new
+     (reader     : System.Address;
+      terminator : System.Address) return zpoller_t_Access with
      Import        => True,
      Convention    => C,
      External_Name => "zpoller_new";
