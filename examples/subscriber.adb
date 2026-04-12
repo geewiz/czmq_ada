@@ -26,12 +26,16 @@ begin
    --  Receive messages in a loop
    for I in 1 .. 5 loop
       declare
-         Msg : Message := Receive (Sub);
+         Msg    : Message;
+         Status : Receive_Status;
       begin
-         Put_Line ("Received message with" & Size (Msg)'Image & " frames:");
-         Put_Line ("  Frame 1: " & Pop_String (Msg));
-         Put_Line ("  Frame 2: " & Pop_String (Msg));
-         Put_Line ("");
+         Receive (Sub, Msg, Status);
+         if Status = Success then
+            Put_Line ("Received message with" & Size (Msg)'Image & " frames:");
+            Put_Line ("  Frame 1: " & Pop_String (Msg));
+            Put_Line ("  Frame 2: " & Pop_String (Msg));
+            Put_Line ("");
+         end if;
       end;
    end loop;
 

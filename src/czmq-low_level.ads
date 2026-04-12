@@ -138,6 +138,12 @@ package CZMQ.Low_Level is
       Convention    => C,
       External_Name => "zsock_set_identity";
 
+   procedure zsock_set_rcvtimeo (self : System.Address;
+                                 rcvtimeo : C.int) with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsock_set_rcvtimeo";
+
    --  zmsg functions
    function zmsg_new return zmsg_t_Access with
      Import        => True,
@@ -429,6 +435,15 @@ package CZMQ.Low_Level is
      Import        => True,
      Convention    => C,
      External_Name => "zsock_wait";
+
+   --  C errno access (Linux: __errno_location returns pointer to thread-local errno)
+   type int_Access is access all C.int with Convention => C;
+   function errno_location return int_Access with
+     Import        => True,
+     Convention    => C,
+     External_Name => "__errno_location";
+
+   EAGAIN : constant C.int := 11;
 
    --  Utility functions
    procedure zsys_init with

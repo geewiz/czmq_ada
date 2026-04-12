@@ -118,22 +118,29 @@ package body CZMQ.Messages is
       Self.Handle := null;
    end Send;
 
-   function Receive (Source : in out Sockets.Socket) return Message is
-      Addr : constant System.Address := Source.Get_Handle;
-      Source_Handle : constant Low_Level.zsock_t_Access :=
-        Low_Level.zsock_t_Access (To_Zsock_Access (Addr));
+   procedure Receive
+     (Source : in out Sockets.Socket;
+      Msg    :    out Message;
+      Status :    out Receive_Status)
+   is
+      Addr : System.Address;
+      Source_Handle : Low_Level.zsock_t_Access;
    begin
-      return Result : Message do
-         if not Source.Is_Valid then
-            raise CZMQ_Error with "Invalid source socket";
-         end if;
+      if not Source.Is_Valid then
+         raise CZMQ_Error with "Invalid source socket";
+      end if;
 
-         Result.Handle := Low_Level.zmsg_recv (Source_Handle);
+      Addr := Source.Get_Handle;
+      Source_Handle := Low_Level.zsock_t_Access (To_Zsock_Access (Addr));
+      Msg.Handle := Low_Level.zmsg_recv (Source_Handle);
 
-         if Result.Handle = null then
-            raise CZMQ_Error with "Failed to receive message";
-         end if;
-      end return;
+      if Msg.Handle /= null then
+         Status := Success;
+      elsif Low_Level.errno_location.all = Low_Level.EAGAIN then
+         Status := Timeout;
+      else
+         raise CZMQ_Error with "Failed to receive message";
+      end if;
    end Receive;
 
    function Is_Valid (Self : Message) return Boolean is
