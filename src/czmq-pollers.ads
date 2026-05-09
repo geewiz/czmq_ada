@@ -22,6 +22,8 @@ package CZMQ.Pollers is
    --  In-place Open/Close procedures (issue #15)
    procedure Open (Self : in out Poller; Socket : in out Sockets.Socket);
    procedure Close (Self : in out Poller);
+   --  Close is idempotent: no-op if poller is already closed.
+   --  After Close, the poller may be re-opened with Open.
 
    --  Add another socket to the poller
    procedure Add (Self : in out Poller; Socket : in out Sockets.Socket);

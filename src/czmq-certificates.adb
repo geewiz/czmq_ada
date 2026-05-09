@@ -112,96 +112,105 @@ package body CZMQ.Certificates is
    end Secret_Key;
 
    procedure Set_Meta (Self : in out Certificate; Name : String; Value : String) is
-      C_Name  : CS.chars_ptr := CS.New_String (Name);
-      C_Value : CS.chars_ptr := CS.New_String (Value);
    begin
       if Self.Handle = null then
-         CS.Free (C_Name);
-         CS.Free (C_Value);
          raise CZMQ_Error with "Invalid certificate";
       end if;
 
-      --  zcert_set_meta is variadic (printf-style), but we pass the value
-      --  as the format string directly. Since our values are plain strings
-      --  with no % characters in typical use, and we use a separate format
-      --  argument, this is safe. We pass the value as the format arg with
-      --  "%s" as format pattern to avoid issues with % in values.
-      --  However, the low-level binding takes a simple chars_ptr for format,
-      --  so we pass Value directly as a pre-formatted string.
-      Low_Level.zcert_set_meta (Self.Handle, C_Name, C_Value);
-      CS.Free (C_Name);
-      CS.Free (C_Value);
+      declare
+         C_Name  : CS.chars_ptr := CS.New_String (Name);
+         C_Value : CS.chars_ptr := CS.New_String (Value);
+      begin
+         --  zcert_set_meta is variadic (printf-style), but we pass the value
+         --  as the format string directly. Since our values are plain strings
+         --  with no % characters in typical use, and we use a separate format
+         --  argument, this is safe. We pass the value as the format arg with
+         --  "%s" as format pattern to avoid issues with % in values.
+         --  However, the low-level binding takes a simple chars_ptr for format,
+         --  so we pass Value directly as a pre-formatted string.
+         Low_Level.zcert_set_meta (Self.Handle, C_Name, C_Value);
+         CS.Free (C_Name);
+         CS.Free (C_Value);
+      end;
    end Set_Meta;
 
    function Meta (Self : Certificate; Name : String) return String is
-      C_Name : CS.chars_ptr := CS.New_String (Name);
-      C_Val  : CS.chars_ptr;
    begin
       if Self.Handle = null then
-         CS.Free (C_Name);
          raise CZMQ_Error with "Invalid certificate";
       end if;
 
-      --  zcert_meta returns a pointer to an internal buffer; do not free
-      C_Val := Low_Level.zcert_meta (Self.Handle, C_Name);
-      CS.Free (C_Name);
+      declare
+         C_Name : CS.chars_ptr := CS.New_String (Name);
+         C_Val  : CS.chars_ptr;
+      begin
+         --  zcert_meta returns a pointer to an internal buffer; do not free
+         C_Val := Low_Level.zcert_meta (Self.Handle, C_Name);
+         CS.Free (C_Name);
 
-      if C_Val = CS.Null_Ptr then
-         return "";
-      end if;
+         if C_Val = CS.Null_Ptr then
+            return "";
+         end if;
 
-      return CS.Value (C_Val);
+         return CS.Value (C_Val);
+      end;
    end Meta;
 
    procedure Save (Self : Certificate; Filename : String) is
-      C_Filename : CS.chars_ptr := CS.New_String (Filename);
-      Rc : C.int;
    begin
       if Self.Handle = null then
-         CS.Free (C_Filename);
          raise CZMQ_Error with "Invalid certificate";
       end if;
 
-      Rc := Low_Level.zcert_save (Self.Handle, C_Filename);
-      CS.Free (C_Filename);
+      declare
+         C_Filename : CS.chars_ptr := CS.New_String (Filename);
+         Rc : C.int;
+      begin
+         Rc := Low_Level.zcert_save (Self.Handle, C_Filename);
+         CS.Free (C_Filename);
 
-      if Rc /= 0 then
-         raise CZMQ_Error with "Failed to save certificate to " & Filename;
-      end if;
+         if Rc /= 0 then
+            raise CZMQ_Error with "Failed to save certificate to " & Filename;
+         end if;
+      end;
    end Save;
 
    procedure Save_Public (Self : Certificate; Filename : String) is
-      C_Filename : CS.chars_ptr := CS.New_String (Filename);
-      Rc : C.int;
    begin
       if Self.Handle = null then
-         CS.Free (C_Filename);
          raise CZMQ_Error with "Invalid certificate";
       end if;
 
-      Rc := Low_Level.zcert_save_public (Self.Handle, C_Filename);
-      CS.Free (C_Filename);
+      declare
+         C_Filename : CS.chars_ptr := CS.New_String (Filename);
+         Rc : C.int;
+      begin
+         Rc := Low_Level.zcert_save_public (Self.Handle, C_Filename);
+         CS.Free (C_Filename);
 
-      if Rc /= 0 then
-         raise CZMQ_Error with "Failed to save public certificate to " & Filename;
-      end if;
+         if Rc /= 0 then
+            raise CZMQ_Error with "Failed to save public certificate to " & Filename;
+         end if;
+      end;
    end Save_Public;
 
    procedure Save_Secret (Self : Certificate; Filename : String) is
-      C_Filename : CS.chars_ptr := CS.New_String (Filename);
-      Rc : C.int;
    begin
       if Self.Handle = null then
-         CS.Free (C_Filename);
          raise CZMQ_Error with "Invalid certificate";
       end if;
 
-      Rc := Low_Level.zcert_save_secret (Self.Handle, C_Filename);
-      CS.Free (C_Filename);
+      declare
+         C_Filename : CS.chars_ptr := CS.New_String (Filename);
+         Rc : C.int;
+      begin
+         Rc := Low_Level.zcert_save_secret (Self.Handle, C_Filename);
+         CS.Free (C_Filename);
 
-      if Rc /= 0 then
-         raise CZMQ_Error with "Failed to save secret certificate to " & Filename;
-      end if;
+         if Rc /= 0 then
+            raise CZMQ_Error with "Failed to save secret certificate to " & Filename;
+         end if;
+      end;
    end Save_Secret;
 
    procedure Apply (Self : Certificate; Target : in out Sockets.Socket) is

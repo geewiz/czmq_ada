@@ -52,6 +52,8 @@ package CZMQ.Sockets is
    procedure Open_Dealer (Self : in out Socket; Endpoint : String := "");
    procedure Open_Router (Self : in out Socket; Endpoint : String := "");
    procedure Close (Self : in out Socket);
+   --  Close is idempotent: no-op if socket is already closed.
+   --  After Close, the socket may be re-opened with any Open_* procedure.
 
    --  Socket operations
    procedure Bind (Self : in out Socket; Endpoint : String);

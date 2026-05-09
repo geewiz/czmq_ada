@@ -257,6 +257,22 @@ begin
 
    Put_Line ("");
 
+   --  Test 18: Re-Open after Close
+   Put_Line ("-- Re-Open after Close --");
+   declare
+      Sock : CZMQ.Sockets.Socket;
+   begin
+      Sock.Open_Pub;
+      Assert (Sock.Is_Valid, "First Open_Pub succeeds");
+      Sock.Close;
+      Assert (not Sock.Is_Valid, "Close invalidates socket");
+      Sock.Open_Rep;
+      Assert (Sock.Is_Valid, "Re-Open with different type succeeds");
+      Sock.Close;
+   end;
+
+   Put_Line ("");
+
    --  Summary
     Put_Line ("=== Results: " & Natural'Image (Pass_Count) & " passed," &
               Natural'Image (Fail_Count) & " failed ===");

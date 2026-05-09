@@ -265,15 +265,13 @@ begin
    Put_Line ("-- Operation on closed certificate --");
    declare
       Cert : CZMQ.Certificates.Certificate;
+      Key  : String (1 .. 40);
+      pragma Unreferenced (Key);
    begin
       Cert.Generate;
       Cert.Close;
-      declare
-         Key : constant String := Cert.Public_Key;
-         pragma Unreferenced (Key);
-      begin
-         Assert (False, "Public_Key on closed cert should raise");
-      end;
+      Key := Cert.Public_Key;
+      Assert (False, "Public_Key on closed cert should raise");
    exception
       when CZMQ.CZMQ_Error =>
          Assert (True, "Public_Key on closed cert raises CZMQ_Error");
