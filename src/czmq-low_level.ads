@@ -477,10 +477,30 @@ package CZMQ.Low_Level is
      Convention    => C,
      External_Name => "zsys_init";
 
-   procedure zsys_shutdown with
-     Import        => True,
-     Convention    => C,
-     External_Name => "zsys_shutdown";
+    procedure zsys_shutdown with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsys_shutdown";
+
+    --  Signal handling types and functions
+    type zsys_handler_fn is access procedure with Convention => C;
+
+    procedure zsys_handler_set (handler_fn : zsys_handler_fn) with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsys_handler_set";
+
+    procedure zsys_handler_reset with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsys_handler_reset";
+
+    --  Global interrupt flag — set by CZMQ's signal handler on SIGINT/SIGTERM.
+    --  Read this instead of using GNAT.Ctrl_C, which CZMQ silently overrides.
+    Zsys_Interrupted : Interfaces.C.int
+      with Import        => True,
+           Convention    => C,
+           External_Name => "zsys_interrupted";
 
 private
 
