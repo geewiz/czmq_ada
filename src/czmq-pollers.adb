@@ -16,18 +16,46 @@ package body CZMQ.Pollers is
    use type System.Address;
    use type Low_Level.zpoller_t_Access;
 
-   function New_Poller (Socket : in out Sockets.Socket) return Poller is
+   --  In-place Open/Close procedures (issue #15)
+
+   procedure Open (Self : in out Poller; Socket : in out Sockets.Socket) is
    begin
+      if Self.Handle /= null then
+         raise Program_Error with "Poller is already open";
+      end if;
+
       if not Socket.Is_Valid then
          raise CZMQ_Error with "Invalid socket";
       end if;
 
+      Self.Handle := Low_Level.zpoller_new
+        (Socket.Get_Handle, System.Null_Address);
+      Self.Last_Ready := System.Null_Address;
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create poller";
+      end if;
+   end Open;
+
+   procedure Close (Self : in out Poller) is
+   begin
+      if Self.Handle /= null then
+         declare
+            Handle_Copy : aliased Low_Level.zpoller_t_Access := Self.Handle;
+         begin
+            Low_Level.zpoller_destroy (Handle_Copy'Access);
+         end;
+         Self.Handle := null;
+         Self.Last_Ready := System.Null_Address;
+      end if;
+   end Close;
+
+   --  Constructor function (refactored to use Open procedure)
+
+   function New_Poller (Socket : in out Sockets.Socket) return Poller is
+   begin
       return Result : Poller do
-         Result.Handle := Low_Level.zpoller_new
-           (Socket.Get_Handle, System.Null_Address);
-         if Result.Handle = null then
-            raise CZMQ_Error with "Failed to create poller";
-         end if;
+         Open (Result, Socket);
       end return;
    end New_Poller;
 

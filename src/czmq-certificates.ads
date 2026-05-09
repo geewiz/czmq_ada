@@ -25,6 +25,13 @@ package CZMQ.Certificates is
    --  If the file has a corresponding "_secret" file, both keys are loaded.
    function Load (Filename : String) return Certificate;
 
+   --  In-place Generate/Load/Close procedures (issue #15)
+   procedure Generate (Self : in out Certificate);
+   procedure Load (Self : in out Certificate; Filename : String);
+   procedure Close (Self : in out Certificate);
+   --  Close is idempotent: no-op if certificate is already closed.
+   --  After Close, the certificate may be re-initialized with Generate or Load.
+
    --  Return the public key as a 40-character Z85-encoded string
    function Public_Key (Self : Certificate) return String;
 

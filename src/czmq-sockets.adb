@@ -40,289 +40,379 @@ package body CZMQ.Sockets is
       end case;
    end Socket_Type_To_Int;
 
+   --  Open/Close procedures (issue #15)
+
+   procedure Open (Self : in out Socket; Kind : Socket_Type) is
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      Self.Handle := Low_Level.zsock_new (Socket_Type_To_Int (Kind));
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create socket";
+      end if;
+   end Open;
+
+   procedure Open_Pub (Self : in out Socket; Endpoint : String := "") is
+      C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      if Endpoint /= "" then
+         C_Endpoint := CS.New_String (Endpoint);
+      end if;
+
+      Self.Handle := Low_Level.zsock_new_pub (C_Endpoint);
+
+      if C_Endpoint /= CS.Null_Ptr then
+         CS.Free (C_Endpoint);
+      end if;
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create PUB socket";
+      end if;
+   end Open_Pub;
+
+   procedure Open_Sub (Self : in out Socket; Endpoint : String := ""; Subscribe : String := "") is
+      C_Endpoint  : CS.chars_ptr := CS.Null_Ptr;
+      C_Subscribe : CS.chars_ptr;
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      if Endpoint /= "" then
+         C_Endpoint := CS.New_String (Endpoint);
+      end if;
+      --  Always create C string for Subscribe (empty string != NULL in C)
+      C_Subscribe := CS.New_String (Subscribe);
+
+      Self.Handle := Low_Level.zsock_new_sub (C_Endpoint, C_Subscribe);
+
+      if C_Endpoint /= CS.Null_Ptr then
+         CS.Free (C_Endpoint);
+      end if;
+      CS.Free (C_Subscribe);
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create SUB socket";
+      end if;
+   end Open_Sub;
+
+   procedure Open_Req (Self : in out Socket; Endpoint : String := "") is
+      C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      if Endpoint /= "" then
+         C_Endpoint := CS.New_String (Endpoint);
+      end if;
+
+      Self.Handle := Low_Level.zsock_new_req (C_Endpoint);
+
+      if C_Endpoint /= CS.Null_Ptr then
+         CS.Free (C_Endpoint);
+      end if;
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create REQ socket";
+      end if;
+   end Open_Req;
+
+   procedure Open_Rep (Self : in out Socket; Endpoint : String := "") is
+      C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      if Endpoint /= "" then
+         C_Endpoint := CS.New_String (Endpoint);
+      end if;
+
+      Self.Handle := Low_Level.zsock_new_rep (C_Endpoint);
+
+      if C_Endpoint /= CS.Null_Ptr then
+         CS.Free (C_Endpoint);
+      end if;
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create REP socket";
+      end if;
+   end Open_Rep;
+
+   procedure Open_Push (Self : in out Socket; Endpoint : String := "") is
+      C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      if Endpoint /= "" then
+         C_Endpoint := CS.New_String (Endpoint);
+      end if;
+
+      Self.Handle := Low_Level.zsock_new_push (C_Endpoint);
+
+      if C_Endpoint /= CS.Null_Ptr then
+         CS.Free (C_Endpoint);
+      end if;
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create PUSH socket";
+      end if;
+   end Open_Push;
+
+   procedure Open_Pull (Self : in out Socket; Endpoint : String := "") is
+      C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      if Endpoint /= "" then
+         C_Endpoint := CS.New_String (Endpoint);
+      end if;
+
+      Self.Handle := Low_Level.zsock_new_pull (C_Endpoint);
+
+      if C_Endpoint /= CS.Null_Ptr then
+         CS.Free (C_Endpoint);
+      end if;
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create PULL socket";
+      end if;
+   end Open_Pull;
+
+   procedure Open_Dealer (Self : in out Socket; Endpoint : String := "") is
+      C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      if Endpoint /= "" then
+         C_Endpoint := CS.New_String (Endpoint);
+      end if;
+
+      Self.Handle := Low_Level.zsock_new_dealer (C_Endpoint);
+
+      if C_Endpoint /= CS.Null_Ptr then
+         CS.Free (C_Endpoint);
+      end if;
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create DEALER socket";
+      end if;
+   end Open_Dealer;
+
+   procedure Open_Router (Self : in out Socket; Endpoint : String := "") is
+      C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Socket is already open";
+      end if;
+
+      if Endpoint /= "" then
+         C_Endpoint := CS.New_String (Endpoint);
+      end if;
+
+      Self.Handle := Low_Level.zsock_new_router (C_Endpoint);
+
+      if C_Endpoint /= CS.Null_Ptr then
+         CS.Free (C_Endpoint);
+      end if;
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create ROUTER socket";
+      end if;
+   end Open_Router;
+
+   procedure Close (Self : in out Socket) is
+   begin
+      if Self.Handle /= null then
+         declare
+            Handle_Copy : aliased Low_Level.zsock_t_Access := Self.Handle;
+         begin
+            Low_Level.zsock_destroy (Handle_Copy'Access);
+         end;
+         Self.Handle := null;
+      end if;
+   end Close;
+
+   --  Constructor functions (refactored to use Open procedures)
+
    function New_Socket (Kind : Socket_Type) return Socket is
    begin
       return Result : Socket do
-         Result.Handle := Low_Level.zsock_new (Socket_Type_To_Int (Kind));
-         if Result.Handle = null then
-            raise CZMQ_Error with "Failed to create socket";
-         end if;
+         Open (Result, Kind);
       end return;
    end New_Socket;
 
    function New_Pub (Endpoint : String := "") return Socket is
    begin
       return Result : Socket do
-         declare
-            C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
-         begin
-            if Endpoint /= "" then
-               C_Endpoint := CS.New_String (Endpoint);
-            end if;
-
-            Result.Handle := Low_Level.zsock_new_pub (C_Endpoint);
-
-            if C_Endpoint /= CS.Null_Ptr then
-               CS.Free (C_Endpoint);
-            end if;
-
-            if Result.Handle = null then
-               raise CZMQ_Error with "Failed to create PUB socket";
-            end if;
-         end;
+         Open_Pub (Result, Endpoint);
       end return;
    end New_Pub;
 
    function New_Sub (Endpoint : String := ""; Subscribe : String := "") return Socket is
    begin
       return Result : Socket do
-         declare
-            C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
-            C_Subscribe : CS.chars_ptr;
-         begin
-            if Endpoint /= "" then
-               C_Endpoint := CS.New_String (Endpoint);
-            end if;
-            --  Always create C string for Subscribe (empty string != NULL in C)
-            C_Subscribe := CS.New_String (Subscribe);
-
-            Result.Handle := Low_Level.zsock_new_sub (C_Endpoint, C_Subscribe);
-
-            if C_Endpoint /= CS.Null_Ptr then
-               CS.Free (C_Endpoint);
-            end if;
-            CS.Free (C_Subscribe);
-
-            if Result.Handle = null then
-               raise CZMQ_Error with "Failed to create SUB socket";
-            end if;
-         end;
+         Open_Sub (Result, Endpoint, Subscribe);
       end return;
    end New_Sub;
 
    function New_Req (Endpoint : String := "") return Socket is
    begin
       return Result : Socket do
-         declare
-            C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
-         begin
-            if Endpoint /= "" then
-               C_Endpoint := CS.New_String (Endpoint);
-            end if;
-
-            Result.Handle := Low_Level.zsock_new_req (C_Endpoint);
-
-            if C_Endpoint /= CS.Null_Ptr then
-               CS.Free (C_Endpoint);
-            end if;
-
-            if Result.Handle = null then
-               raise CZMQ_Error with "Failed to create REQ socket";
-            end if;
-         end;
+         Open_Req (Result, Endpoint);
       end return;
    end New_Req;
 
    function New_Rep (Endpoint : String := "") return Socket is
    begin
       return Result : Socket do
-         declare
-            C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
-         begin
-            if Endpoint /= "" then
-               C_Endpoint := CS.New_String (Endpoint);
-            end if;
-
-            Result.Handle := Low_Level.zsock_new_rep (C_Endpoint);
-
-            if C_Endpoint /= CS.Null_Ptr then
-               CS.Free (C_Endpoint);
-            end if;
-
-            if Result.Handle = null then
-               raise CZMQ_Error with "Failed to create REP socket";
-            end if;
-         end;
+         Open_Rep (Result, Endpoint);
       end return;
    end New_Rep;
 
    function New_Push (Endpoint : String := "") return Socket is
    begin
       return Result : Socket do
-         declare
-            C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
-         begin
-            if Endpoint /= "" then
-               C_Endpoint := CS.New_String (Endpoint);
-            end if;
-
-            Result.Handle := Low_Level.zsock_new_push (C_Endpoint);
-
-            if C_Endpoint /= CS.Null_Ptr then
-               CS.Free (C_Endpoint);
-            end if;
-
-            if Result.Handle = null then
-               raise CZMQ_Error with "Failed to create PUSH socket";
-            end if;
-         end;
+         Open_Push (Result, Endpoint);
       end return;
    end New_Push;
 
    function New_Pull (Endpoint : String := "") return Socket is
    begin
       return Result : Socket do
-         declare
-            C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
-         begin
-            if Endpoint /= "" then
-               C_Endpoint := CS.New_String (Endpoint);
-            end if;
-
-            Result.Handle := Low_Level.zsock_new_pull (C_Endpoint);
-
-            if C_Endpoint /= CS.Null_Ptr then
-               CS.Free (C_Endpoint);
-            end if;
-
-            if Result.Handle = null then
-               raise CZMQ_Error with "Failed to create PULL socket";
-            end if;
-         end;
+         Open_Pull (Result, Endpoint);
       end return;
    end New_Pull;
 
    function New_Dealer (Endpoint : String := "") return Socket is
    begin
       return Result : Socket do
-         declare
-            C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
-         begin
-            if Endpoint /= "" then
-               C_Endpoint := CS.New_String (Endpoint);
-            end if;
-
-            Result.Handle := Low_Level.zsock_new_dealer (C_Endpoint);
-
-            if C_Endpoint /= CS.Null_Ptr then
-               CS.Free (C_Endpoint);
-            end if;
-
-            if Result.Handle = null then
-               raise CZMQ_Error with "Failed to create DEALER socket";
-            end if;
-         end;
+         Open_Dealer (Result, Endpoint);
       end return;
    end New_Dealer;
 
    function New_Router (Endpoint : String := "") return Socket is
    begin
       return Result : Socket do
-         declare
-            C_Endpoint : CS.chars_ptr := CS.Null_Ptr;
-         begin
-            if Endpoint /= "" then
-               C_Endpoint := CS.New_String (Endpoint);
-            end if;
-
-            Result.Handle := Low_Level.zsock_new_router (C_Endpoint);
-
-            if C_Endpoint /= CS.Null_Ptr then
-               CS.Free (C_Endpoint);
-            end if;
-
-            if Result.Handle = null then
-               raise CZMQ_Error with "Failed to create ROUTER socket";
-            end if;
-         end;
+         Open_Router (Result, Endpoint);
       end return;
    end New_Router;
 
    procedure Bind (Self : in out Socket; Endpoint : String) is
-      C_Endpoint : CS.chars_ptr := CS.New_String (Endpoint);
-      Rc : C.int;
    begin
       if Self.Handle = null then
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Rc := Low_Level.zsock_bind (Self.Handle, C_Endpoint);
-      CS.Free (C_Endpoint);
+      declare
+         C_Endpoint : CS.chars_ptr := CS.New_String (Endpoint);
+         Rc : C.int;
+      begin
+         Rc := Low_Level.zsock_bind (Self.Handle, C_Endpoint);
+         CS.Free (C_Endpoint);
 
-      if Rc = -1 then
-         raise CZMQ_Error with "Failed to bind to " & Endpoint;
-      end if;
+         if Rc = -1 then
+            raise CZMQ_Error with "Failed to bind to " & Endpoint;
+         end if;
+      end;
    end Bind;
 
    procedure Connect (Self : in out Socket; Endpoint : String) is
-      C_Endpoint : CS.chars_ptr := CS.New_String (Endpoint);
-      Rc : C.int;
    begin
       if Self.Handle = null then
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Rc := Low_Level.zsock_connect (Self.Handle, C_Endpoint);
-      CS.Free (C_Endpoint);
+      declare
+         C_Endpoint : CS.chars_ptr := CS.New_String (Endpoint);
+         Rc : C.int;
+      begin
+         Rc := Low_Level.zsock_connect (Self.Handle, C_Endpoint);
+         CS.Free (C_Endpoint);
 
-      if Rc = -1 then
-         raise CZMQ_Error with "Failed to connect to " & Endpoint;
-      end if;
+         if Rc = -1 then
+            raise CZMQ_Error with "Failed to connect to " & Endpoint;
+         end if;
+      end;
    end Connect;
 
    procedure Unbind (Self : in out Socket; Endpoint : String) is
-      C_Endpoint : CS.chars_ptr := CS.New_String (Endpoint);
-      Rc : C.int;
    begin
       if Self.Handle = null then
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Rc := Low_Level.zsock_unbind (Self.Handle, C_Endpoint);
-      CS.Free (C_Endpoint);
+      declare
+         C_Endpoint : CS.chars_ptr := CS.New_String (Endpoint);
+         Rc : C.int;
+      begin
+         Rc := Low_Level.zsock_unbind (Self.Handle, C_Endpoint);
+         CS.Free (C_Endpoint);
 
-      if Rc = -1 then
-         raise CZMQ_Error with "Failed to unbind from " & Endpoint;
-      end if;
+         if Rc = -1 then
+            raise CZMQ_Error with "Failed to unbind from " & Endpoint;
+         end if;
+      end;
    end Unbind;
 
    procedure Disconnect (Self : in out Socket; Endpoint : String) is
-      C_Endpoint : CS.chars_ptr := CS.New_String (Endpoint);
-      Rc : C.int;
    begin
       if Self.Handle = null then
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Rc := Low_Level.zsock_disconnect (Self.Handle, C_Endpoint);
-      CS.Free (C_Endpoint);
+      declare
+         C_Endpoint : CS.chars_ptr := CS.New_String (Endpoint);
+         Rc : C.int;
+      begin
+         Rc := Low_Level.zsock_disconnect (Self.Handle, C_Endpoint);
+         CS.Free (C_Endpoint);
 
-      if Rc = -1 then
-         raise CZMQ_Error with "Failed to disconnect from " & Endpoint;
-      end if;
+         if Rc = -1 then
+            raise CZMQ_Error with "Failed to disconnect from " & Endpoint;
+         end if;
+      end;
    end Disconnect;
 
    procedure Set_Subscribe (Self : in out Socket; Filter : String) is
-      C_Filter : CS.chars_ptr := CS.New_String (Filter);
    begin
       if Self.Handle = null then
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_subscribe (Self.Handle, C_Filter);
-      CS.Free (C_Filter);
+      declare
+         C_Filter : CS.chars_ptr := CS.New_String (Filter);
+      begin
+         Low_Level.zsock_set_subscribe (Self.Handle, C_Filter);
+         CS.Free (C_Filter);
+      end;
    end Set_Subscribe;
 
    procedure Set_Identity (Self : in out Socket; Identity : String) is
-      C_Identity : CS.chars_ptr := CS.New_String (Identity);
    begin
       if Self.Handle = null then
-         CS.Free (C_Identity);
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_identity (To_Address (Self.Handle), C_Identity);
-      CS.Free (C_Identity);
+      declare
+         C_Identity : CS.chars_ptr := CS.New_String (Identity);
+      begin
+         Low_Level.zsock_set_identity (To_Address (Self.Handle), C_Identity);
+         CS.Free (C_Identity);
+      end;
    end Set_Identity;
 
    procedure Set_Curve_Server (Self : in out Socket; Enabled : Boolean := True) is
@@ -336,27 +426,31 @@ package body CZMQ.Sockets is
    end Set_Curve_Server;
 
    procedure Set_Curve_Serverkey (Self : in out Socket; Key : String) is
-      C_Key : CS.chars_ptr := CS.New_String (Key);
    begin
       if Self.Handle = null then
-         CS.Free (C_Key);
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_curve_serverkey (To_Address (Self.Handle), C_Key);
-      CS.Free (C_Key);
+      declare
+         C_Key : CS.chars_ptr := CS.New_String (Key);
+      begin
+         Low_Level.zsock_set_curve_serverkey (To_Address (Self.Handle), C_Key);
+         CS.Free (C_Key);
+      end;
    end Set_Curve_Serverkey;
 
    procedure Set_Zap_Domain (Self : in out Socket; Domain : String) is
-      C_Domain : CS.chars_ptr := CS.New_String (Domain);
    begin
       if Self.Handle = null then
-         CS.Free (C_Domain);
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_zap_domain (To_Address (Self.Handle), C_Domain);
-      CS.Free (C_Domain);
+      declare
+         C_Domain : CS.chars_ptr := CS.New_String (Domain);
+      begin
+         Low_Level.zsock_set_zap_domain (To_Address (Self.Handle), C_Domain);
+         CS.Free (C_Domain);
+      end;
    end Set_Zap_Domain;
 
    procedure Set_Plain_Server (Self : in out Socket; Enabled : Boolean := True) is
@@ -370,27 +464,31 @@ package body CZMQ.Sockets is
    end Set_Plain_Server;
 
    procedure Set_Plain_Username (Self : in out Socket; Username : String) is
-      C_Username : CS.chars_ptr := CS.New_String (Username);
    begin
       if Self.Handle = null then
-         CS.Free (C_Username);
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_plain_username (To_Address (Self.Handle), C_Username);
-      CS.Free (C_Username);
+      declare
+         C_Username : CS.chars_ptr := CS.New_String (Username);
+      begin
+         Low_Level.zsock_set_plain_username (To_Address (Self.Handle), C_Username);
+         CS.Free (C_Username);
+      end;
    end Set_Plain_Username;
 
    procedure Set_Plain_Password (Self : in out Socket; Password : String) is
-      C_Password : CS.chars_ptr := CS.New_String (Password);
    begin
       if Self.Handle = null then
-         CS.Free (C_Password);
          raise CZMQ_Error with "Invalid socket";
       end if;
 
-      Low_Level.zsock_set_plain_password (To_Address (Self.Handle), C_Password);
-      CS.Free (C_Password);
+      declare
+         C_Password : CS.chars_ptr := CS.New_String (Password);
+      begin
+         Low_Level.zsock_set_plain_password (To_Address (Self.Handle), C_Password);
+         CS.Free (C_Password);
+      end;
    end Set_Plain_Password;
 
    procedure Set_Receive_Timeout (Self : in out Socket; Timeout_Ms : Integer) is

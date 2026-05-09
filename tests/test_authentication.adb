@@ -98,14 +98,18 @@ begin
          Ada.Directories.Create_Directory (Cert_Dir);
       end if;
 
-      Client_Cert.Save_Public (Cert_Dir & "/client");
+       Client_Cert.Save_Public (Cert_Dir & "/client");
 
-      Auth.Configure_Curve (Cert_Dir);
-      Assert (True, "Configure_Curve with directory succeeds");
+       Auth.Configure_Curve (Cert_Dir);
+       Assert (True, "Configure_Curve with directory succeeds");
 
-      --  Clean up
-      Ada.Directories.Delete_File (Cert_Dir & "/client");
-      Ada.Directories.Delete_Directory (Cert_Dir);
+       --  Clean up
+       Ada.Directories.Delete_File (Cert_Dir & "/client");
+       --  Secret file is not created by Save_Public, but if it exists clean it up
+       if Ada.Directories.Exists (Cert_Dir & "/client_secret") then
+          Ada.Directories.Delete_File (Cert_Dir & "/client_secret");
+       end if;
+       Ada.Directories.Delete_Directory (Cert_Dir);
    end;
 
    Put_Line ("");
