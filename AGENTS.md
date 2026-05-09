@@ -94,5 +94,5 @@ For optional endpoints: only allocate if the string is non-empty (`if Endpoint /
 1. Update `version` in `alire.toml`
 2. Update `CHANGELOG.md`: rename `## Unreleased` to `## vN.N.N - YYYY-MM-DD`
 3. Review `README.md` for necessary updates
-4. Commit, push
+4. Commit, push, tag
 5. Ask user to submit the new release to Alire
