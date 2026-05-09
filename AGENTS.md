@@ -5,7 +5,7 @@
 All build/test commands must run inside the `ada_dev` distrobox:
 
 ```bash
-distrobox enter ada_dev -- bash -c "cd /var/home/geewiz/Projects/src/geewiz/czmq_ada && alr build"
+distrobox enter ada_dev -- alr build
 ```
 
 **Prerequisite:** CZMQ dev library must be installed (`libczmq-dev` on Debian/Ubuntu, `czmq-devel` on Fedora).
@@ -83,8 +83,15 @@ CS.Free (C_Str);
 
 For optional endpoints: only allocate if the string is non-empty (`if Endpoint /= "" then C_Endpoint := CS.New_String (Endpoint); end if;`), because CZMQ treats `NULL` as "no endpoint". But for subscription filters: always allocate (empty string `""` means "subscribe to all", `NULL` means "no subscription").
 
+## Implementation workflow
+
+- Create issue branch
+- Implement feature/fix
+- Update changelog under `## Unreleased` heading
+
 ## Release Workflow
 
 1. Update `version` in `alire.toml`
 2. Update `CHANGELOG.md`: rename `## Unreleased` to `## vN.N.N - YYYY-MM-DD`
-3. Commit, push, tag
+3. Commit, push
+4. Ask user to submit the new release to Alire
