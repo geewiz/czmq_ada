@@ -17,26 +17,60 @@ package body CZMQ.Certificates is
    use type C.int;
    use type CS.chars_ptr;
 
+   --  In-place procedures (issue #15)
+
+   procedure Generate (Self : in out Certificate) is
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Certificate is already initialized";
+      end if;
+
+      Self.Handle := Low_Level.zcert_new;
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to create certificate";
+      end if;
+   end Generate;
+
+   procedure Load (Self : in out Certificate; Filename : String) is
+      C_Filename : CS.chars_ptr := CS.New_String (Filename);
+   begin
+      if Self.Handle /= null then
+         raise Program_Error with "Certificate is already initialized";
+      end if;
+
+      Self.Handle := Low_Level.zcert_load (C_Filename);
+      CS.Free (C_Filename);
+
+      if Self.Handle = null then
+         raise CZMQ_Error with "Failed to load certificate from " & Filename;
+      end if;
+   end Load;
+
+   procedure Close (Self : in out Certificate) is
+   begin
+      if Self.Handle /= null then
+         declare
+            Handle_Copy : aliased Low_Level.zcert_t_Access := Self.Handle;
+         begin
+            Low_Level.zcert_destroy (Handle_Copy'Access);
+         end;
+         Self.Handle := null;
+      end if;
+   end Close;
+
+   --  Constructor functions (refactored to use procedure versions)
+
    function New_Certificate return Certificate is
    begin
       return Result : Certificate do
-         Result.Handle := Low_Level.zcert_new;
-         if Result.Handle = null then
-            raise CZMQ_Error with "Failed to create certificate";
-         end if;
+         Generate (Result);
       end return;
    end New_Certificate;
 
    function Load (Filename : String) return Certificate is
-      C_Filename : CS.chars_ptr := CS.New_String (Filename);
    begin
       return Result : Certificate do
-         Result.Handle := Low_Level.zcert_load (C_Filename);
-         CS.Free (C_Filename);
-
-         if Result.Handle = null then
-            raise CZMQ_Error with "Failed to load certificate from " & Filename;
-         end if;
+         Load (Result, Filename);
       end return;
    end Load;
 
