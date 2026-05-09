@@ -41,6 +41,18 @@ package CZMQ.Sockets is
    function New_Dealer (Endpoint : String := "") return Socket;
    function New_Router (Endpoint : String := "") return Socket;
 
+   --  In-place Open/Close procedures (issue #15)
+   procedure Open (Self : in out Socket; Kind : Socket_Type);
+   procedure Open_Pub (Self : in out Socket; Endpoint : String := "");
+   procedure Open_Sub (Self : in out Socket; Endpoint : String := ""; Subscribe : String := "");
+   procedure Open_Req (Self : in out Socket; Endpoint : String := "");
+   procedure Open_Rep (Self : in out Socket; Endpoint : String := "");
+   procedure Open_Push (Self : in out Socket; Endpoint : String := "");
+   procedure Open_Pull (Self : in out Socket; Endpoint : String := "");
+   procedure Open_Dealer (Self : in out Socket; Endpoint : String := "");
+   procedure Open_Router (Self : in out Socket; Endpoint : String := "");
+   procedure Close (Self : in out Socket);
+
    --  Socket operations
    procedure Bind (Self : in out Socket; Endpoint : String);
    procedure Connect (Self : in out Socket; Endpoint : String);
