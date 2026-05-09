@@ -152,114 +152,112 @@ begin
          Assert (True, "Set_Identity on invalid socket raises CZMQ_Error");
    end;
 
+    Put_Line ("");
+
+   --  Test 11: Open/Close happy path
+   Put_Line ("-- Open/Close happy path --");
+   declare
+      Sock : CZMQ.Sockets.Socket;
+   begin
+      Assert (not Sock.Is_Valid, "Default socket is not valid");
+      Sock.Open_Pub;
+      Assert (Sock.Is_Valid, "Open_Pub makes socket valid");
+      Sock.Close;
+      Assert (not Sock.Is_Valid, "Close makes socket invalid");
+   end;
+
    Put_Line ("");
 
-    Put_Line ("");
+   --  Test 12: Open on already-open socket raises Program_Error
+   Put_Line ("-- Open on already-open socket --");
+   declare
+      Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pub;
+   begin
+      Sock.Open_Req;
+      Assert (False, "Open on already-open socket should raise Program_Error");
+   exception
+      when Program_Error =>
+         Assert (True, "Open on already-open socket raises Program_Error");
+   end;
 
-    --  Test 11: Open/Close happy path
-    Put_Line ("-- Open/Close happy path --");
-    declare
-       Sock : CZMQ.Sockets.Socket;  --  Default empty
-    begin
-       Assert (not Sock.Is_Valid, "Default socket is not valid");
-       Sock.Open_Pub;
-       Assert (Sock.Is_Valid, "Open_Pub makes socket valid");
-       Sock.Close;
-       Assert (not Sock.Is_Valid, "Close makes socket invalid");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 13: Close on already-closed socket is no-op
+   Put_Line ("-- Close idempotent --");
+   declare
+      Sock : CZMQ.Sockets.Socket;
+   begin
+      Sock.Close;
+      Assert (True, "Close on already-closed socket is no-op");
+   end;
 
-    --  Test 12: Open on already-open socket raises Program_Error
-    Put_Line ("-- Open on already-open socket --");
-    declare
-       Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pub;
-    begin
-       Sock.Open_Req;
-       Assert (False, "Open on already-open socket should raise Program_Error");
-    exception
-       when Program_Error =>
-          Assert (True, "Open on already-open socket raises Program_Error");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 14: Open creates bare socket
+   Put_Line ("-- Open bare socket --");
+   declare
+      Sock : CZMQ.Sockets.Socket;
+   begin
+      Sock.Open (CZMQ.Sockets.Dealer);
+      Assert (Sock.Is_Valid, "Open creates bare socket");
+      Sock.Close;
+   end;
 
-    --  Test 13: Close on already-closed socket is no-op
-    Put_Line ("-- Close idempotent --");
-    declare
-       Sock : CZMQ.Sockets.Socket;
-    begin
-       Sock.Close;  --  Should not raise
-       Assert (True, "Close on already-closed socket is no-op");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 15: Bind on closed socket raises CZMQ_Error
+   Put_Line ("-- Bind on closed socket --");
+   declare
+      Sock : CZMQ.Sockets.Socket;
+   begin
+      Sock.Open_Pub;
+      Sock.Close;
+      Sock.Bind ("tcp://127.0.0.1:9999");
+      Assert (False, "Bind on closed socket should raise");
+   exception
+      when CZMQ.CZMQ_Error =>
+         Assert (True, "Bind on closed socket raises CZMQ_Error");
+   end;
 
-    --  Test 14: Open creates bare socket
-    Put_Line ("-- Open bare socket --");
-    declare
-       Sock : CZMQ.Sockets.Socket;
-    begin
-       Sock.Open (CZMQ.Sockets.Dealer);
-       Assert (Sock.Is_Valid, "Open creates bare socket");
-       Sock.Close;
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 16: Constructors still work after refactor
+   Put_Line ("-- Constructors still work --");
+   declare
+      Pub_Sock  : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pub;
+      Sub_Sock  : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Sub;
+      Req_Sock  : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Req;
+      Rep_Sock  : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Rep;
+      Push_Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Push;
+      Pull_Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
+      Deal_Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Dealer;
+      Rout_Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Router;
+   begin
+      Assert (Pub_Sock.Is_Valid, "New_Pub still works");
+      Assert (Sub_Sock.Is_Valid, "New_Sub still works");
+      Assert (Req_Sock.Is_Valid, "New_Req still works");
+      Assert (Rep_Sock.Is_Valid, "New_Rep still works");
+      Assert (Push_Sock.Is_Valid, "New_Push still works");
+      Assert (Pull_Sock.Is_Valid, "New_Pull still works");
+      Assert (Deal_Sock.Is_Valid, "New_Dealer still works");
+      Assert (Rout_Sock.Is_Valid, "New_Router still works");
+   end;
 
-    --  Test 15: Operation on closed socket raises CZMQ_Error
-    Put_Line ("-- Operation on closed socket --");
-    declare
-       Sock : CZMQ.Sockets.Socket;
-    begin
-       Sock.Open_Pub;
-       Sock.Close;
-       Sock.Set_Identity ("test");
-       Assert (False, "Set_Identity on closed socket should raise");
-    exception
-       when CZMQ.CZMQ_Error =>
-          Assert (True, "Set_Identity on closed socket raises CZMQ_Error");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 17: Open_Sub with empty Subscribe filter
+   Put_Line ("-- Open_Sub with empty filter --");
+   declare
+      Sock : CZMQ.Sockets.Socket;
+   begin
+      Sock.Open_Sub;
+      Assert (Sock.Is_Valid, "Open_Sub with empty filter creates valid socket");
+      Sock.Close;
+   end;
 
-    --  Test 16: Constructors still work after refactor
-    Put_Line ("-- Constructors still work --");
-    declare
-       Pub_Sock  : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pub;
-       Sub_Sock  : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Sub;
-       Req_Sock  : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Req;
-       Rep_Sock  : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Rep;
-       Push_Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Push;
-       Pull_Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
-       Deal_Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Dealer;
-       Rout_Sock : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Router;
-    begin
-       Assert (Pub_Sock.Is_Valid, "New_Pub still works");
-       Assert (Sub_Sock.Is_Valid, "New_Sub still works");
-       Assert (Req_Sock.Is_Valid, "New_Req still works");
-       Assert (Rep_Sock.Is_Valid, "New_Rep still works");
-       Assert (Push_Sock.Is_Valid, "New_Push still works");
-       Assert (Pull_Sock.Is_Valid, "New_Pull still works");
-       Assert (Deal_Sock.Is_Valid, "New_Dealer still works");
-       Assert (Rout_Sock.Is_Valid, "New_Router still works");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
-
-    --  Test 17: Open_Sub with empty Subscribe filter
-    Put_Line ("-- Open_Sub with empty filter --");
-    declare
-       Sock : CZMQ.Sockets.Socket;
-    begin
-       Sock.Open_Sub;  --  Empty endpoint and subscribe
-       Assert (Sock.Is_Valid, "Open_Sub with empty filter creates valid socket");
-       Sock.Close;
-    end;
-
-    Put_Line ("");
-
-    --  Summary
+   --  Summary
     Put_Line ("=== Results: " & Natural'Image (Pass_Count) & " passed," &
               Natural'Image (Fail_Count) & " failed ===");
 

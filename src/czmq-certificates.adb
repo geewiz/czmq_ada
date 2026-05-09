@@ -32,18 +32,21 @@ package body CZMQ.Certificates is
    end Generate;
 
    procedure Load (Self : in out Certificate; Filename : String) is
-      C_Filename : CS.chars_ptr := CS.New_String (Filename);
    begin
       if Self.Handle /= null then
          raise Program_Error with "Certificate is already initialized";
       end if;
 
-      Self.Handle := Low_Level.zcert_load (C_Filename);
-      CS.Free (C_Filename);
+      declare
+         C_Filename : CS.chars_ptr := CS.New_String (Filename);
+      begin
+         Self.Handle := Low_Level.zcert_load (C_Filename);
+         CS.Free (C_Filename);
 
-      if Self.Handle = null then
-         raise CZMQ_Error with "Failed to load certificate from " & Filename;
-      end if;
+         if Self.Handle = null then
+            raise CZMQ_Error with "Failed to load certificate from " & Filename;
+         end if;
+      end;
    end Load;
 
    procedure Close (Self : in out Certificate) is

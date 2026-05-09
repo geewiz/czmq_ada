@@ -116,78 +116,96 @@ begin
          Assert (True, "Wait on invalid poller raises CZMQ_Error");
    end;
 
+    Put_Line ("");
+
+   --  Test 6: Open/Close happy path
+   Put_Line ("-- Open/Close happy path --");
+   declare
+      Sock   : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
+      Poller : CZMQ.Pollers.Poller;
+   begin
+      Assert (not Poller.Is_Valid, "Default poller is not valid");
+      Poller.Open (Sock);
+      Assert (Poller.Is_Valid, "Open makes poller valid");
+      Poller.Close;
+      Assert (not Poller.Is_Valid, "Close makes poller invalid");
+   end;
+
    Put_Line ("");
 
-    Put_Line ("");
+   --  Test 7: Open on already-open poller raises Program_Error
+   Put_Line ("-- Open on already-open poller --");
+   declare
+      Sock   : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
+      Poller : CZMQ.Pollers.Poller := CZMQ.Pollers.New_Poller (Sock);
+   begin
+      Poller.Open (Sock);
+      Assert (False, "Open on already-open poller should raise Program_Error");
+   exception
+      when Program_Error =>
+         Assert (True, "Open on already-open poller raises Program_Error");
+   end;
 
-    --  Test 6: Open/Close happy path
-    Put_Line ("-- Open/Close happy path --");
-    declare
-       Sock   : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
-       Poller : CZMQ.Pollers.Poller;
-    begin
-       Assert (not Poller.Is_Valid, "Default poller is not valid");
-       Poller.Open (Sock);
-       Assert (Poller.Is_Valid, "Open makes poller valid");
-       Poller.Close;
-       Assert (not Poller.Is_Valid, "Close makes poller invalid");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 8: Open with invalid socket raises CZMQ_Error
+   Put_Line ("-- Open with invalid socket --");
+   declare
+      Sock   : CZMQ.Sockets.Socket;
+      Poller : CZMQ.Pollers.Poller;
+   begin
+      Poller.Open (Sock);
+      Assert (False, "Open with invalid socket should raise CZMQ_Error");
+   exception
+      when CZMQ.CZMQ_Error =>
+         Assert (True, "Open with invalid socket raises CZMQ_Error");
+   end;
 
-    --  Test 7: Open on already-open poller raises Program_Error
-    Put_Line ("-- Open on already-open poller --");
-    declare
-       Sock   : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
-       Poller : CZMQ.Pollers.Poller := CZMQ.Pollers.New_Poller (Sock);
-    begin
-       Poller.Open (Sock);
-       Assert (False, "Open on already-open poller should raise Program_Error");
-    exception
-       when Program_Error =>
-          Assert (True, "Open on already-open poller raises Program_Error");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 9: Close on already-closed poller is no-op
+   Put_Line ("-- Close idempotent --");
+   declare
+      Poller : CZMQ.Pollers.Poller;
+   begin
+      Poller.Close;
+      Assert (True, "Close on already-closed poller is no-op");
+   end;
 
-    --  Test 8: Open with invalid socket raises CZMQ_Error
-    Put_Line ("-- Open with invalid socket --");
-    declare
-       Sock   : CZMQ.Sockets.Socket;  --  Invalid
-       Poller : CZMQ.Pollers.Poller;
-    begin
-       Poller.Open (Sock);
-       Assert (False, "Open with invalid socket should raise CZMQ_Error");
-    exception
-       when CZMQ.CZMQ_Error =>
-          Assert (True, "Open with invalid socket raises CZMQ_Error");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 10: Wait on opened-then-closed poller raises CZMQ_Error
+   Put_Line ("-- Wait on closed poller --");
+   declare
+      Sock   : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
+      Poller : CZMQ.Pollers.Poller;
+   begin
+      Poller.Open (Sock);
+      Poller.Close;
+      if Poller.Wait (50) then
+         Assert (False, "Wait on closed poller should raise CZMQ_Error");
+      else
+         Assert (False, "Wait on closed poller should raise CZMQ_Error");
+      end if;
+   exception
+      when CZMQ.CZMQ_Error =>
+         Assert (True, "Wait on closed poller raises CZMQ_Error");
+   end;
 
-    --  Test 9: Close on already-closed poller is no-op
-    Put_Line ("-- Close idempotent --");
-    declare
-       Poller : CZMQ.Pollers.Poller;
-    begin
-       Poller.Close;  --  Should not raise
-       Assert (True, "Close on already-closed poller is no-op");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 11: New_Poller still works after refactor
+   Put_Line ("-- New_Poller still works --");
+   declare
+      Sock   : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
+      Poller : CZMQ.Pollers.Poller := CZMQ.Pollers.New_Poller (Sock);
+   begin
+      Assert (Poller.Is_Valid, "New_Poller still works after refactor");
+   end;
 
-    --  Test 10: New_Poller still works after refactor
-    Put_Line ("-- New_Poller still works --");
-    declare
-       Sock   : CZMQ.Sockets.Socket := CZMQ.Sockets.New_Pull;
-       Poller : CZMQ.Pollers.Poller := CZMQ.Pollers.New_Poller (Sock);
-    begin
-       Assert (Poller.Is_Valid, "New_Poller still works after refactor");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
-
-    --  Summary
+   --  Summary
     Put_Line ("=== Results: " & Natural'Image (Pass_Count) & " passed," &
               Natural'Image (Fail_Count) & " failed ===");
 

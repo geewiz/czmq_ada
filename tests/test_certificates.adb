@@ -186,118 +186,115 @@ begin
       Assert (True, "Apply certificate to socket succeeds");
    end;
 
+    Put_Line ("");
+
+   --  Test 7: Generate/Close happy path
+   Put_Line ("-- Generate/Close happy path --");
+   declare
+      Cert : CZMQ.Certificates.Certificate;
+   begin
+      Assert (not Cert.Is_Valid, "Default certificate is not valid");
+      Cert.Generate;
+      Assert (Cert.Is_Valid, "Generate makes certificate valid");
+      Cert.Close;
+      Assert (not Cert.Is_Valid, "Close makes certificate invalid");
+   end;
+
    Put_Line ("");
 
-    Put_Line ("");
+   --  Test 8: Load procedure happy path
+   Put_Line ("-- Load procedure happy path --");
+   declare
+      Test_Dir  : constant String := "test_certs_proc_tmp";
+      Filename  : constant String := Test_Dir & "/proc_test_cert";
+      Pub_File  : constant String := Test_Dir & "/proc_test_cert";
+      Sec_File  : constant String := Test_Dir & "/proc_test_cert_secret";
+   begin
+      if not Ada.Directories.Exists (Test_Dir) then
+         Ada.Directories.Create_Directory (Test_Dir);
+      end if;
 
-    --  Test 7: Generate/Close happy path
-    Put_Line ("-- Generate/Close happy path --");
-    declare
-       Cert : CZMQ.Certificates.Certificate;
-    begin
-       Assert (not Cert.Is_Valid, "Default certificate is not valid");
-       Cert.Generate;
-       Assert (Cert.Is_Valid, "Generate makes certificate valid");
-       Cert.Close;
-       Assert (not Cert.Is_Valid, "Close makes certificate invalid");
-    end;
+      declare
+         Orig     : CZMQ.Certificates.Certificate :=
+           CZMQ.Certificates.New_Certificate;
+         Orig_Pub : constant String := Orig.Public_Key;
+         Loaded   : CZMQ.Certificates.Certificate;
+      begin
+         Orig.Save (Filename);
+         Loaded.Load (Filename);
+         Assert (Loaded.Is_Valid, "Load procedure makes certificate valid");
+         Assert (Loaded.Public_Key = Orig_Pub,
+                 "Loaded public key matches original");
+         Loaded.Close;
+         Assert (not Loaded.Is_Valid, "Close makes loaded certificate invalid");
+      end;
 
-    Put_Line ("");
+      Ada.Directories.Delete_File (Pub_File);
+      Ada.Directories.Delete_File (Sec_File);
+      Ada.Directories.Delete_Directory (Test_Dir);
+   end;
 
-    --  Test 8: Load procedure happy path
-    Put_Line ("-- Load procedure happy path --");
-    declare
-       Test_Dir  : constant String := "test_certs_proc_tmp";
-       Filename  : constant String := Test_Dir & "/proc_test_cert";
-       Pub_File  : constant String := Test_Dir & "/proc_test_cert";
-       Sec_File  : constant String := Test_Dir & "/proc_test_cert_secret";
-    begin
-       if not Ada.Directories.Exists (Test_Dir) then
-          Ada.Directories.Create_Directory (Test_Dir);
-       end if;
+   Put_Line ("");
 
-       declare
-          Orig     : CZMQ.Certificates.Certificate :=
-            CZMQ.Certificates.New_Certificate;
-          Orig_Pub : constant String := Orig.Public_Key;
-          Loaded   : CZMQ.Certificates.Certificate;
-       begin
-          Orig.Save (Filename);
-          Loaded.Load (Filename);
-          Assert (Loaded.Is_Valid, "Load procedure makes certificate valid");
-          Assert (Loaded.Public_Key = Orig_Pub,
-                  "Loaded public key matches original");
-          Loaded.Close;
-          Assert (not Loaded.Is_Valid, "Close makes loaded certificate invalid");
-       end;
+   --  Test 9: Generate on already-valid certificate raises Program_Error
+   Put_Line ("-- Generate on already-valid certificate --");
+   declare
+      Cert : CZMQ.Certificates.Certificate := CZMQ.Certificates.New_Certificate;
+   begin
+      Cert.Generate;
+      Assert (False, "Generate on valid cert should raise Program_Error");
+   exception
+      when Program_Error =>
+         Assert (True, "Generate on valid cert raises Program_Error");
+   end;
 
-       --  Clean up
-       Ada.Directories.Delete_File (Pub_File);
-       Ada.Directories.Delete_File (Sec_File);
-       Ada.Directories.Delete_Directory (Test_Dir);
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 10: Close on already-closed certificate is no-op
+   Put_Line ("-- Close idempotent --");
+   declare
+      Cert : CZMQ.Certificates.Certificate;
+   begin
+      Cert.Close;
+      Assert (True, "Close on already-closed certificate is no-op");
+   end;
 
-    --  Test 9: Generate on already-valid certificate raises Program_Error
-    Put_Line ("-- Generate on already-valid certificate --");
-    declare
-       Cert : CZMQ.Certificates.Certificate := CZMQ.Certificates.New_Certificate;
-    begin
-       Cert.Generate;
-       Assert (False, "Generate on valid cert should raise Program_Error");
-    exception
-       when Program_Error =>
-          Assert (True, "Generate on valid cert raises Program_Error");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 11: Operation on closed certificate raises CZMQ_Error
+   Put_Line ("-- Operation on closed certificate --");
+   declare
+      Cert : CZMQ.Certificates.Certificate;
+   begin
+      Cert.Generate;
+      Cert.Close;
+      declare
+         Key : constant String := Cert.Public_Key;
+         pragma Unreferenced (Key);
+      begin
+         Assert (False, "Public_Key on closed cert should raise");
+      end;
+   exception
+      when CZMQ.CZMQ_Error =>
+         Assert (True, "Public_Key on closed cert raises CZMQ_Error");
+   end;
 
-    --  Test 10: Close on already-closed certificate is no-op
-    Put_Line ("-- Close idempotent --");
-    declare
-       Cert : CZMQ.Certificates.Certificate;
-    begin
-       Cert.Close;  --  Should not raise
-       Assert (True, "Close on already-closed certificate is no-op");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
+   --  Test 12: Existing constructors still work after refactor
+   Put_Line ("-- Constructors still work --");
+   declare
+      Cert_A : CZMQ.Certificates.Certificate := CZMQ.Certificates.New_Certificate;
+      Cert_B : CZMQ.Certificates.Certificate;
+   begin
+      Assert (Cert_A.Is_Valid, "New_Certificate still works");
+      Cert_B.Generate;
+      Assert (Cert_B.Is_Valid, "Generate works");
+   end;
 
-    --  Test 11: Operation on closed certificate raises CZMQ_Error
-    Put_Line ("-- Operation on closed certificate --");
-    declare
-       Cert : CZMQ.Certificates.Certificate;
-    begin
-       Cert.Generate;
-       Cert.Close;
-       declare
-          Key : constant String := Cert.Public_Key;
-          pragma Unreferenced (Key);
-       begin
-          Assert (False, "Public_Key on closed cert should raise");
-       end;
-    exception
-       when CZMQ.CZMQ_Error =>
-          Assert (True, "Public_Key on closed cert raises CZMQ_Error");
-    end;
+   Put_Line ("");
 
-    Put_Line ("");
-
-    --  Test 12: Existing constructors still work after refactor
-    Put_Line ("-- Constructors still work --");
-    declare
-       Cert_A : CZMQ.Certificates.Certificate := CZMQ.Certificates.New_Certificate;
-       Cert_B : CZMQ.Certificates.Certificate;
-    begin
-       Assert (Cert_A.Is_Valid, "New_Certificate still works");
-       Cert_B.Generate;
-       Assert (Cert_B.Is_Valid, "Generate works");
-    end;
-
-    Put_Line ("");
-
-    --  Summary
+   --  Summary
     Put_Line ("=== Results: " & Natural'Image (Pass_Count) & " passed," &
               Natural'Image (Fail_Count) & " failed ===");
 
