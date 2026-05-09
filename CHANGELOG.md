@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ([#15](https://github.com/geewiz/czmq_ada/issues/15)).
 - In-place `Open`/`Close` procedures on `CZMQ.Pollers`
   ([#15](https://github.com/geewiz/czmq_ada/issues/15)).
+- `CZMQ.Signals` package with `Is_Interrupted`, `Set_Handler`, and
+  `Reset_Handler` for detecting SIGINT/SIGTERM in CZMQ-based applications
+  ([#14](https://github.com/geewiz/czmq_ada/issues/14)).
 
 ## v0.4.0 - 2026-04-12
 
