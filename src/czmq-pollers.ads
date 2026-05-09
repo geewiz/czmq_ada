@@ -19,6 +19,10 @@ package CZMQ.Pollers is
    --  Create a new poller watching one socket
    function New_Poller (Socket : in out Sockets.Socket) return Poller;
 
+   --  In-place Open/Close procedures (issue #15)
+   procedure Open (Self : in out Poller; Socket : in out Sockets.Socket);
+   procedure Close (Self : in out Poller);
+
    --  Add another socket to the poller
    procedure Add (Self : in out Poller; Socket : in out Sockets.Socket);
 
