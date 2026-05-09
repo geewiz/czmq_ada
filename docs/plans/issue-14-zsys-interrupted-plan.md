@@ -331,9 +331,9 @@ Binding the stable global variable is the right choice. The `volatile` qualifier
 
 The C global is zero-initialized at program start by the C runtime. This means `Is_Interrupted` returns `False` even before `zsys_init` is called — no prior CZMQ initialization is required (R6).
 
-### Why `pragma Pure` instead of `pragma Preelaborate`
+### Why `pragma Preelaborate` (not `pragma Pure`)
 
-`CZMQ.Signals` has no state, no `Limited_Controlled` types, and no elaboration-time side effects. `pragma Pure` is the most permissive categorization and allows the package to be `with`-ed from any context. A `pragma Pure` package can import C objects (the Ada standard package `Interfaces.C` itself is Pure and contains C-interfacing types). A Pure package can also `with` a Preelaborate package like `CZMQ.Low_Level` — Pure is a stricter subset of Preelaborate. If the GNAT compiler rejects `pragma Pure` for a package that reads a volatile C global (because the global could be considered "external state"), downgrade to `pragma Preelaborate`. This is the only risk — and `Preelaborate` is equally functional, just slightly less composable in pure-functional Ada contexts (which this library doesn't use anyway).
+`CZMQ.Signals` uses `pragma Preelaborate` rather than `pragma Pure`. Although the package itself has no state or elaboration side effects, GNAT enforces the Ada RM rule that a Pure unit cannot depend on a non-Pure unit — and `CZMQ.Low_Level` is `pragma Preelaborate`. `Preelaborate` is equally functional for this library's use case; the only difference is slightly reduced composability in pure-functional Ada contexts, which this library doesn't use.
 
 ---
 

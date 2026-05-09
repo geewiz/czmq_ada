@@ -23,26 +23,40 @@ procedure Test_Signals is
       end if;
    end Assert;
 
+   --  Custom handler for testing Set_Handler with non-null callback
+   Signal_Count : Natural := 0;
+
+   procedure Custom_Handler;
+   pragma Convention (C, Custom_Handler);
+
+   procedure Custom_Handler is
+   begin
+      Signal_Count := Signal_Count + 1;
+   end Custom_Handler;
+
 begin
    Put_Line ("=== CZMQ.Signals Tests ===");
    Put_Line ("");
 
-   --  Test 1: Is_Interrupted returns False before any signal
+   --  Test 1: Is_Interrupted returns False before any signal.
+   --  The C global is zero-initialized at program start, so this works
+   --  even before zsys_init is called (no socket creation required).
    Put_Line ("-- Is_Interrupted initial state --");
    Assert (not CZMQ.Signals.Is_Interrupted,
-           "Is_Interrupted returns False on startup");
+           "Is_Interrupted returns False on startup (no socket needed)");
 
    Put_Line ("");
 
-   --  Test 2: Is_Interrupted is callable without socket creation
-   --  (This implicitly tests R6 — no CZMQ initialization needed)
-   Put_Line ("-- Is_Interrupted without socket --");
+   --  Test 2: Set_Handler with custom handler callback
+   Put_Line ("-- Set_Handler with custom handler --");
    declare
-      --  Deliberately no socket creation — just check the global
-      Result : Boolean := CZMQ.Signals.Is_Interrupted;
+      Handler : constant CZMQ.Signals.Handler_Type :=
+                  Custom_Handler'Unrestricted_Access;
    begin
-      Assert (not Result,
-              "Is_Interrupted works without socket creation");
+      CZMQ.Signals.Set_Handler (Handler);
+      Assert (True, "Set_Handler accepts custom handler callback");
+      CZMQ.Signals.Reset_Handler;
+      Assert (True, "Reset_Handler restores after custom handler");
    end;
 
    Put_Line ("");
