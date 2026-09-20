@@ -66,6 +66,10 @@ package CZMQ.Sockets is
    --  The identity string must be 1-255 characters.
    procedure Set_Identity (Self : in out Socket; Identity : String);
 
+   --  Enable or disable mandatory routing on a ROUTER socket.
+   --  When enabled, sending to an unknown identity reports an unroutable message.
+   procedure Set_Router_Mandatory (Self : in out Socket; Enabled : Boolean := True);
+
    --  CURVE security options
 
    --  Enable or disable CURVE server mode on this socket.

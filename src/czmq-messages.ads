@@ -32,8 +32,18 @@ package CZMQ.Messages is
    --  Get the number of frames in the message
    function Size (Self : Message) return Natural;
 
+   --  Send outcomes
+   type Send_Status is (Enqueued, Unroutable);
+
    --  Send the message (consumes the message - it will be invalid after)
    procedure Send (Self : in out Message; Dest : in out Sockets.Socket);
+
+   --  Send the message and report whether it was enqueued or unroutable.
+   --  An unroutable message remains valid and can be inspected or retried.
+   procedure Send
+     (Self   : in out Message;
+      Dest   : in out Sockets.Socket;
+      Status :    out Send_Status);
 
    --  Receive outcome
    type Receive_Status is (Success, Timeout);
