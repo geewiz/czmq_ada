@@ -92,11 +92,25 @@ package body CZMQ.Messages is
    end Size;
 
    procedure Send (Self : in out Message; Dest : in out Sockets.Socket) is
+      Status : Send_Status;
+   begin
+      Send (Self, Dest, Status);
+      if Status = Unroutable then
+         raise CZMQ_Error with "Message is unroutable";
+      end if;
+   end Send;
+
+   procedure Send
+     (Self   : in out Message;
+      Dest   : in out Sockets.Socket;
+      Status :    out Send_Status)
+   is
       Addr : constant System.Address := Dest.Get_Handle;
       Dest_Handle : constant Low_Level.zsock_t_Access :=
         To_Zsock_Access (Addr);
       Handle_Copy : aliased Low_Level.zmsg_t_Access := Self.Handle;
       Rc : C.int;
+      Errno : C.int := 0;
    begin
       if Self.Handle = null then
          raise CZMQ_Error with "Invalid message";
@@ -108,13 +122,16 @@ package body CZMQ.Messages is
 
       --  zmsg_send consumes the message and sets the pointer to null
       Rc := Low_Level.zmsg_send (Handle_Copy'Access, Dest_Handle);
+      Errno := Low_Level.errno_location.all;
+      Self.Handle := Handle_Copy;
 
-      if Rc /= 0 then
+      if Rc = 0 then
+         Status := Enqueued;
+      elsif Errno = Low_Level.EHOSTUNREACH then
+         Status := Unroutable;
+      else
          raise CZMQ_Error with "Failed to send message";
       end if;
-
-      --  Message has been consumed, mark it as invalid
-      Self.Handle := null;
    end Send;
 
    procedure Receive

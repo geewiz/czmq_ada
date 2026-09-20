@@ -160,6 +160,12 @@ package CZMQ.Low_Level is
       Convention    => C,
       External_Name => "zsock_sndtimeo";
 
+   procedure zsock_set_router_mandatory (self : System.Address;
+                                         router_mandatory : C.int) with
+      Import        => True,
+      Convention    => C,
+      External_Name => "zsock_set_router_mandatory";
+
    --  zmsg functions
    function zmsg_new return zmsg_t_Access with
      Import        => True,
@@ -470,6 +476,7 @@ package CZMQ.Low_Level is
      External_Name => "__errno_location";
 
    EAGAIN : constant C.int := 11;
+   EHOSTUNREACH : constant C.int := 113;
 
    --  Utility functions
    procedure zsys_init with

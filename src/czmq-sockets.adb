@@ -415,6 +415,18 @@ package body CZMQ.Sockets is
       end;
    end Set_Identity;
 
+   procedure Set_Router_Mandatory
+     (Self : in out Socket; Enabled : Boolean := True)
+   is
+   begin
+      if Self.Handle = null then
+         raise CZMQ_Error with "Invalid socket";
+      end if;
+
+      Low_Level.zsock_set_router_mandatory
+        (To_Address (Self.Handle), (if Enabled then 1 else 0));
+   end Set_Router_Mandatory;
+
    procedure Set_Curve_Server (Self : in out Socket; Enabled : Boolean := True) is
    begin
       if Self.Handle = null then
