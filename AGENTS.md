@@ -96,3 +96,17 @@ For optional endpoints: only allocate if the string is non-empty (`if Endpoint /
 3. Review `README.md` for necessary updates
 4. Commit, push, tag
 5. Ask user to submit the new release to Alire
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues in `geewiz/czmq_ada`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the five canonical triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context repository. See `docs/agents/domain.md`.
