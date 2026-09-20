@@ -37,7 +37,7 @@ czmq_ada/
 ### Prerequisites
 
 - [Alire](https://alire.ada.dev/) package manager (provides the GNAT toolchain)
-- CZMQ library and development headers
+- CZMQ library and development headers. `Set_Router_Mandatory` requires CZMQ 3.0.0 or later and libzmq 4.0.0 or later.
 
 **Fedora/RHEL:**
 ```bash
